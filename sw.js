@@ -1,6 +1,6 @@
 /* Minimal service worker for offline caching */
-var CACHE = 'tindi-selma-v1';
-var ASSETS = ['/', '/index.html', '/css/style.css', '/js/main.js'];
+var CACHE = 'tindi-selma-v2';
+var ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', function (event) {
   event.waitUntil(
