@@ -5,75 +5,243 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin — Rose Selma Card Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f0d0a;
-    color: #c9bfb0;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  .container { max-width: 700px; margin: 0 auto; }
-  h1 { font-family: 'Georgia', serif; color: #b8956a; font-weight: 300; font-size: 1.8rem; margin-bottom: 0.5rem; }
-  h2 { font-family: 'Georgia', serif; color: #e8dece; font-weight: 300; font-size: 1.2rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid #2e271f; }
-  label { display: block; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #b8956a; margin-bottom: 0.3rem; margin-top: 1rem; }
-  input, textarea {
-    width: 100%; padding: 0.7rem 0.9rem;
-    background: #1a1410; border: 0.5px solid #3d3020; border-radius: 2px;
-    color: #e8dece; font-size: 0.9rem; font-family: inherit;
-    transition: border-color 0.2s;
-  }
-  input:focus, textarea:focus { outline: none; border-color: #b8956a; }
-  textarea { resize: vertical; min-height: 70px; line-height: 1.6; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
-  .btn-row { display: flex; gap: 0.8rem; margin-top: 2rem; flex-wrap: wrap; }
-  .btn {
-    font-family: inherit; font-size: 0.8rem; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 0.8rem 1.6rem; cursor: pointer; border-radius: 2px;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-  }
-  .btn-primary {
-    background: #b8956a; color: #0f0d0a; border: none;
-  }
-  .btn-primary:hover { background: #d4a96a; }
-  .btn-secondary {
-    background: transparent; color: #b8956a; border: 0.5px solid #3d3020;
-  }
-  .btn-secondary:hover { background: #1a1410; border-color: #b8956a; }
-  .msg {
-    font-size: 0.8rem; padding: 0.7rem 1rem; border-radius: 2px; margin-top: 1rem;
-    text-align: center; letter-spacing: 0.05em;
-  }
-  .msg-success { background: #1a2a1a; color: #8ab88a; border: 0.5px solid #2a4a2a; }
-  .msg-error { background: #2a1a1a; color: #c98a8a; border: 0.5px solid #4a2a2a; }
-  .msg-info { background: #1a1a2a; color: #8a8ac9; border: 0.5px solid #2a2a4a; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Login */
-  .login-box {
-    max-width: 380px; margin: 6rem auto 0; text-align: center;
-    padding: 3rem 2rem; background: #1a1410; border: 0.5px solid #2e271f; border-radius: 2px;
-  }
-  .login-box h1 { margin-bottom: 1.5rem; }
-  .login-box input { text-align: center; margin-bottom: 1rem; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f0d0a;
+  color: #c9bfb0;
+  min-height: 100vh;
+}
 
-  .hidden { display: none !important; }
+/* ── LOGIN ── */
+.login-box {
+  max-width: 380px; margin: 6rem auto 0; text-align: center;
+  padding: 3rem 2rem; background: #1a1410; border: 0.5px solid #2e271f; border-radius: 2px;
+}
+.login-box h1 { font-family: 'Georgia', serif; color: #b8956a; font-weight: 300; font-size: 1.8rem; margin-bottom: 1.5rem; }
+.login-box input {
+  width: 100%; text-align: center; margin-bottom: 1rem;
+  padding: 0.7rem 0.9rem; background: #0f0d0a; border: 0.5px solid #3d3020; border-radius: 2px;
+  color: #e8dece; font-size: 0.9rem;
+}
+.login-box input:focus { outline: none; border-color: #b8956a; }
 
-  /* Help text */
-  .help { font-size: 0.7rem; color: #5c5040; margin-top: 0.3rem; }
+.hidden { display: none !important; }
 
-  @media (max-width: 600px) {
-    .row, .row-3 { grid-template-columns: 1fr; }
-    h1 { font-size: 1.4rem; }
-  }
+/* ── EDITOR LAYOUT ── */
+.editor-layout {
+  display: flex; height: 100vh;
+}
+.editor-panel {
+  width: 420px; min-width: 380px; overflow-y: auto; padding: 1.5rem;
+  border-right: 0.5px solid #2e271f; background: #0f0d0a;
+}
+.preview-panel {
+  flex: 1; overflow-y: auto; padding: 1.5rem;
+  background: #1a1410;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.editor-panel h1 { font-family: 'Georgia', serif; color: #b8956a; font-weight: 300; font-size: 1.4rem; margin-bottom: 1rem; }
+.editor-panel h2 { font-family: 'Georgia', serif; color: #e8dece; font-weight: 300; font-size: 1rem; margin: 1.5rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 0.5px solid #2e271f; }
+.editor-panel label {
+  display: block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #b8956a; margin-bottom: 0.2rem; margin-top: 0.7rem;
+}
+.editor-panel input, .editor-panel textarea {
+  width: 100%; padding: 0.5rem 0.7rem;
+  background: #1a1410; border: 0.5px solid #3d3020; border-radius: 2px;
+  color: #e8dece; font-size: 0.8rem; font-family: inherit;
+  transition: border-color 0.15s;
+}
+.editor-panel input:focus, .editor-panel textarea:focus { outline: none; border-color: #b8956a; }
+.editor-panel textarea { resize: vertical; min-height: 52px; line-height: 1.5; }
+.editor-panel .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.editor-panel .row-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+
+.btn-row { display: flex; gap: 0.6rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.btn {
+  font-family: inherit; font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.6rem 1.2rem; cursor: pointer; border-radius: 2px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-primary { background: #b8956a; color: #0f0d0a; border: none; }
+.btn-primary:hover { background: #d4a96a; }
+.btn-secondary { background: transparent; color: #b8956a; border: 0.5px solid #3d3020; }
+.btn-secondary:hover { background: #1a1410; border-color: #b8956a; }
+.msg { font-size: 0.7rem; padding: 0.5rem 0.8rem; border-radius: 2px; margin-top: 0.8rem; text-align: center; }
+.msg-success { background: #1a2a1a; color: #8ab88a; border: 0.5px solid #2a4a2a; }
+.msg-error { background: #2a1a1a; color: #c98a8a; border: 0.5px solid #4a2a2a; }
+
+/* ── PREVIEW card styles (mirrors index.html) ── */
+.preview-wrap { width: min(440px, 100%); }
+.preview-label {
+  font-family: 'Jost', sans-serif; font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #5c5040; text-align: center;
+  margin-bottom: 0.5rem; margin-top: 1rem;
+}
+.preview-label:first-child { margin-top: 0; }
+
+.card-face-preview {
+  width: 100%; border-radius: 2px; overflow: hidden;
+  position: relative;
+}
+.front-preview { background: #faf7f2; border: 0.5px solid #d9cfc0; }
+.back-preview { background: #1a1410; border: 0.5px solid #2e271f; }
+
+.card-top-preview {
+  background: #1a1410; padding: clamp(1.2rem, 4vw, 2rem) clamp(1.2rem, 4vw, 2rem) clamp(0.8rem, 3vw, 1.2rem);
+  position: relative; overflow: hidden;
+}
+.sacred-bg-preview {
+  position: absolute; top: -30px; right: -30px;
+  width: clamp(120px, 40%, 180px); height: clamp(120px, 40%, 180px); opacity: 0.08;
+}
+.hero-row-preview {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; position: relative; z-index: 1;
+}
+.hero-text-preview { flex: 1; min-width: 0; }
+.hero-photo-preview {
+  flex: 0 0 90px; width: 90px; height: 108px;
+  border-radius: 6px; border: 1.5px solid #b8956a;
+  background-color: #1a1410; background-size: cover;
+  background-position: center 10%; background-repeat: no-repeat; overflow: hidden;
+}
+.eyebrow-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(7px, 1.8vw, 9px);
+  font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #b8956a; margin-bottom: clamp(0.5rem, 2vw, 0.8rem);
+}
+.name-preview {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 6vw, 28px);
+  font-weight: 300; color: #f5efe6; line-height: 1.15; margin-bottom: 0.4rem;
+}
+.name-preview em { font-style: italic; }
+.divider-line-preview { width: 40px; height: 0.5px; background: #b8956a; margin: clamp(0.6rem, 2vw, 1rem) 0; }
+.titles-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(8px, 2vw, 10px);
+  font-weight: 300; letter-spacing: 0.06em; color: #8a7d6d; line-height: 1.8;
+}
+.card-body-preview { padding: clamp(1rem, 3vw, 1.5rem) clamp(1.2rem, 4vw, 2rem) clamp(1.2rem, 4vw, 2rem); }
+.years-row-preview { display: flex; gap: 0; margin-bottom: clamp(1rem, 3vw, 1.5rem); }
+.year-pill-preview {
+  flex: 1; text-align: center; padding: clamp(0.4rem, 1.5vw, 0.6rem) 0.2rem; border: 0.5px solid #d9cfc0;
+}
+.year-pill-preview:not(:last-child) { border-right: none; }
+.year-num-preview {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 4vw, 22px);
+  font-weight: 400; color: #3d2e1e; display: block; line-height: 1;
+}
+.year-label-preview {
+  font-size: clamp(6px, 1.4vw, 8px); font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #9a8c7a; display: block; margin-top: 2px;
+}
+.body-text-preview {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(12px, 3vw, 14px);
+  font-weight: 400; font-style: italic; color: #4a3d30; line-height: 1.7;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+}
+.pillars-preview {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+}
+.pillar-preview {
+  background: #f0ebe0; border: 0.5px solid #d9cfc0; padding: 0.5rem 0.6rem;
+  font-family: 'Jost', sans-serif; font-size: clamp(7px, 1.8vw, 9px);
+  font-weight: 400; color: #5c4a35; letter-spacing: 0.03em;
+  display: flex; align-items: center; gap: 5px;
+}
+.pillar-dot-preview { width: 4px; height: 4px; border-radius: 50%; background: #b8956a; flex-shrink: 0; }
+.intention-block-preview { border-left: 1.5px solid #b8956a; padding-left: 0.8rem; }
+.intention-label-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(6px, 1.6vw, 8px);
+  font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #b8956a; margin-bottom: 0.3rem;
+}
+.intention-text-preview {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(11px, 2.8vw, 13px);
+  font-style: italic; font-weight: 300; color: #5c4a35; line-height: 1.6;
+}
+.front-footer-preview {
+  padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1.2rem, 4vw, 2rem);
+  border-top: 0.5px solid #d9cfc0; display: flex; align-items: center; justify-content: flex-end;
+  background: #faf7f2;
+}
+.front-hint-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(7px, 1.6vw, 9px);
+  font-weight: 400; letter-spacing: 0.08em; color: #b8a898;
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* ── BACK preview ── */
+.back-top-preview {
+  padding: clamp(1.2rem, 4vw, 2rem) clamp(1.2rem, 4vw, 2rem) 0;
+  position: relative; overflow: hidden;
+}
+.back-sacred-preview {
+  position: absolute; bottom: -40px; left: -40px;
+  width: clamp(140px, 45%, 200px); height: clamp(140px, 45%, 200px); opacity: 0.05;
+}
+.back-eyebrow-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(7px, 1.6vw, 9px);
+  font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #b8956a; margin-bottom: clamp(0.8rem, 3vw, 1.2rem);
+}
+.back-name-preview {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(18px, 5vw, 24px);
+  font-weight: 300; color: #f5efe6; line-height: 1.2; margin-bottom: 0.3rem;
+}
+.back-name-preview em { font-style: italic; }
+.back-divider-preview { width: 40px; height: 0.5px; background: #b8956a; margin: clamp(0.6rem, 2vw, 1rem) 0; }
+.back-body-preview {
+  padding: clamp(1rem, 3vw, 1.5rem) clamp(1.2rem, 4vw, 2rem);
+  display: flex; flex-direction: column; gap: clamp(0.7rem, 2.5vw, 1rem);
+}
+.bio-para-preview {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(11px, 2.8vw, 13px);
+  font-weight: 300; color: #c9bfb0; line-height: 1.7;
+}
+.bio-para-preview strong { font-weight: 400; color: #e8dece; font-style: normal; }
+.back-tags-preview {
+  display: flex; flex-wrap: wrap; gap: 0.3rem;
+  margin-top: auto; padding-top: clamp(0.4rem, 1.5vw, 0.6rem);
+}
+.tag-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(7px, 1.6vw, 8px);
+  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #b8956a; border: 0.5px solid #3d3020;
+  padding: 0.25rem 0.5rem; border-radius: 1px;
+}
+.back-footer-preview {
+  padding: clamp(0.7rem, 2vw, 1rem) clamp(1.2rem, 4vw, 2rem);
+  border-top: 0.5px solid #2e271f; display: flex; align-items: center;
+}
+.flip-hint-preview {
+  font-family: 'Jost', sans-serif; font-size: clamp(7px, 1.6vw, 9px);
+  font-weight: 400; letter-spacing: 0.08em; color: #5c5040;
+  display: flex; align-items: center; gap: 5px;
+}
+.flip-icon-preview { width: 14px; height: 14px; opacity: 0.6; }
+
+/* Change indicator */
+.changed { border-color: #d4a96a !important; }
+
+@media (max-width: 900px) {
+  .editor-layout { flex-direction: column; height: auto; }
+  .editor-panel { width: 100%; min-width: unset; border-right: none; border-bottom: 0.5px solid #2e271f; }
+  .preview-panel { width: 100%; }
+}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div class="container" id="loginScreen">
+<div id="loginScreen">
   <div class="login-box">
     <h1>Card Editor</h1>
     <input type="password" id="passInput" placeholder="Enter password" autofocus>
@@ -82,97 +250,106 @@
   </div>
 </div>
 
-<!-- EDITOR -->
-<div class="container hidden" id="editorScreen">
-  <h1>Edit Card Content</h1>
-  <p style="color:#5c5040; font-size:0.8rem; margin-bottom:0.5rem;">Make changes below, then download the updated card.</p>
+<!-- EDITOR + PREVIEW -->
+<div class="editor-layout hidden" id="editorScreen">
+  <div class="editor-panel" id="editorPanel">
+    <h1>Edit Card</h1>
 
-  <h2>Page Info</h2>
-  <label>Page Title</label>
-  <input id="pageTitle" value="Rose Selma Tindi Amadi — Energy Healer &amp; Soul Alignment Facilitator">
-  <label>OG Description (for social previews)</label>
-  <textarea id="ogDesc">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence. Energy Healing · Soul Readings · Human Design · Numerology · Astrology · Life Coaching.</textarea>
+    <h2>Page Info</h2>
+    <label>Page Title</label>
+    <input id="pageTitle" value="Rose Selma Tindi Amadi — Energy Healer &amp; Soul Alignment Facilitator">
+    <label>OG Description (social previews)</label>
+    <textarea id="ogDesc">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence. Energy Healing · Soul Readings · Human Design · Numerology · Astrology · Life Coaching.</textarea>
 
-  <h2>Front — Hero Section</h2>
-  <label>Eyebrow / Tagline</label>
-  <input id="fEyebrow" value="Soul Alignment · Energy Healing · Intuitive Guidance">
-  <div class="row">
-    <div><label>Name Line 1</label><input id="fName1" value="Rose Selma"></div>
-    <div><label>Name Line 2 (italic)</label><input id="fName2" value="Tindi Amadi"></div>
+    <h2>Front — Hero</h2>
+    <label>Eyebrow / Tagline</label>
+    <input id="fEyebrow" value="Soul Alignment · Energy Healing · Intuitive Guidance">
+    <div class="row">
+      <div><label>Name Line 1</label><input id="fName1" value="Rose Selma"></div>
+      <div><label>Name Line 2 (italic)</label><input id="fName2" value="Tindi Amadi"></div>
+    </div>
+    <div class="row">
+      <div><label>Titles Line 1</label><input id="fTitles1" value="Energy Healer · Intuitive Guide"></div>
+      <div><label>Titles Line 2</label><input id="fTitles2" value="Soul Alignment Facilitator · Life Coach"></div>
+    </div>
+
+    <h2>Front — Stats</h2>
+    <div class="row-3">
+      <div><label>Pill 1 Number</label><input id="s1num" value="15+"><label>Pill 1 Label</label><input id="s1label" value="yrs coaching"></div>
+      <div><label>Pill 2 Number</label><input id="s2num" value="5+"><label>Pill 2 Label</label><input id="s2label" value="yrs energy healing"></div>
+    </div>
+    <div class="row-3">
+      <div style="grid-column:1/-1"><label>Pill 3 Number</label><input id="s3num" value="3"><label>Pill 3 Label</label><input id="s3label" value="yrs soul alignment"></div>
+    </div>
+
+    <h2>Front — Body</h2>
+    <label>Body Quote Text</label>
+    <textarea id="fBody">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence.</textarea>
+    <label>Pillars / Services (6)</label>
+    <div class="row-3">
+      <div><input id="p1" value="Energetic block clearing"></div>
+      <div><input id="p2" value="Soul readings"></div>
+      <div><input id="p3" value="Ancestral imprints"></div>
+      <div><input id="p4" value="Blueprint awareness"></div>
+      <div><input id="p5" value="Human design"></div>
+      <div><input id="p6" value="Numerology &amp; astrology"></div>
+    </div>
+    <label>Intention Label</label>
+    <input id="fIntentionLabel" value="My intention for you">
+    <label>Intention Quote</label>
+    <textarea id="fIntention">"To help create a space where you feel grounded, seen, supported, and energetically open — to receive the full depth of your own healing, remembrance, and transformation."</textarea>
+    <label>Flip Hint Text</label>
+    <input id="fHint" value="Tap to read my story">
+
+    <h2>Back — Hero</h2>
+    <label>Back Eyebrow</label>
+    <input id="bEyebrow" value="About Rose Selma">
+    <div class="row">
+      <div><label>Back Name Line 1</label><input id="bName1" value="Walking alongside you"></div>
+      <div><label>Back Name Line 2 (italic)</label><input id="bName2" value="on this journey"></div>
+    </div>
+
+    <h2>Back — Bio</h2>
+    <label>Paragraph 1</label>
+    <textarea id="bio1">I'm <strong>Rose Selma Tindi Amadi</strong> — an Energy Healer, Intuitive Guide, Soul Alignment Facilitator, and Life Coach with over <strong>15 years of transformative work</strong> supporting people through self-discovery, healing, and deeper alignment.</textarea>
+    <label>Paragraph 2</label>
+    <textarea id="bio2">My practice weaves together <strong>energy healing, soul readings, and blueprint awareness</strong> — including numerology, astrology, and human design — to help you identify energetic blocks, emotional patterns, and soul-level themes that may be limiting your expansion.</textarea>
+    <label>Paragraph 3</label>
+    <textarea id="bio3">I also hold space for a community of <strong>200 Awakening Allies</strong>, gathered around healing, empowerment, spiritual growth, and conscious transformation.</textarea>
+    <label>Paragraph 4</label>
+    <textarea id="bio4">Before and during your journey, my intention is to help you feel <strong>grounded, seen, and energetically open</strong> — so you can receive the full depth of your own remembrance and transformation.</textarea>
+
+    <h2>Back — Tags</h2>
+    <div class="row-3">
+      <div><input id="t1" value="Energy Healing"></div>
+      <div><input id="t2" value="Soul Readings"></div>
+      <div><input id="t3" value="Human Design"></div>
+      <div><input id="t4" value="Numerology"></div>
+      <div><input id="t5" value="Astrology"></div>
+      <div><input id="t6" value="Life Coaching"></div>
+      <div><input id="t7" value="Ancestral Work"></div>
+    </div>
+
+    <h2>Back — Footer</h2>
+    <label>Back Flip Hint</label>
+    <input id="bHint" value="Tap to flip back">
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateCard()">Download HTML</button>
+      <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+    </div>
+    <div id="genMsg"></div>
   </div>
-  <div class="row">
-    <div><label>Titles Line 1</label><input id="fTitles1" value="Energy Healer · Intuitive Guide"></div>
-    <div><label>Titles Line 2</label><input id="fTitles2" value="Soul Alignment Facilitator · Life Coach"></div>
+
+  <!-- LIVE PREVIEW -->
+  <div class="preview-panel" id="previewPanel">
+    <div class="preview-wrap">
+      <div class="preview-label">Front</div>
+      <div class="card-face-preview front-preview" id="frontPreview"></div>
+      <div class="preview-label">Back</div>
+      <div class="card-face-preview back-preview" id="backPreview"></div>
+    </div>
   </div>
-
-  <h2>Front — Stats (3 Pills)</h2>
-  <div class="row-3">
-    <div><label>Pill 1 Number</label><input id="s1num" value="15+"><label>Pill 1 Label</label><input id="s1label" value="yrs coaching"></div>
-    <div><label>Pill 2 Number</label><input id="s2num" value="5+"><label>Pill 2 Label</label><input id="s2label" value="yrs energy healing"></div>
-    <div><label>Pill 3 Number</label><input id="s3num" value="3"><label>Pill 3 Label</label><input id="s3label" value="yrs soul alignment"></div>
-  </div>
-
-  <h2>Front — Body</h2>
-  <label>Body Quote Text</label>
-  <textarea id="fBody">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence.</textarea>
-
-  <label>Pillars / Services (6 items)</label>
-  <div class="row-3">
-    <div><input id="p1" value="Energetic block clearing"></div>
-    <div><input id="p2" value="Soul readings"></div>
-    <div><input id="p3" value="Ancestral imprints"></div>
-    <div><input id="p4" value="Blueprint awareness"></div>
-    <div><input id="p5" value="Human design"></div>
-    <div><input id="p6" value="Numerology &amp; astrology"></div>
-  </div>
-
-  <label>Intention Label</label>
-  <input id="fIntentionLabel" value="My intention for you">
-  <label>Intention Quote</label>
-  <textarea id="fIntention">"To help create a space where you feel grounded, seen, supported, and energetically open — to receive the full depth of your own healing, remembrance, and transformation."</textarea>
-
-  <h2>Front — Footer</h2>
-  <label>Flip Hint Text</label>
-  <input id="fHint" value="Tap to read my story">
-
-  <h2>Back — Hero Section</h2>
-  <label>Back Eyebrow</label>
-  <input id="bEyebrow" value="About Rose Selma">
-  <div class="row">
-    <div><label>Back Name Line 1</label><input id="bName1" value="Walking alongside you"></div>
-    <div><label>Back Name Line 2 (italic)</label><input id="bName2" value="on this journey"></div>
-  </div>
-
-  <h2>Back — Bio (4 Paragraphs)</h2>
-  <label>Paragraph 1</label>
-  <textarea id="bio1">I'm <strong>Rose Selma Tindi Amadi</strong> — an Energy Healer, Intuitive Guide, Soul Alignment Facilitator, and Life Coach with over <strong>15 years of transformative work</strong> supporting people through self-discovery, healing, and deeper alignment.</textarea>
-  <label>Paragraph 2</label>
-  <textarea id="bio2">My practice weaves together <strong>energy healing, soul readings, and blueprint awareness</strong> — including numerology, astrology, and human design — to help you identify energetic blocks, emotional patterns, and soul-level themes that may be limiting your expansion.</textarea>
-  <label>Paragraph 3</label>
-  <textarea id="bio3">I also hold space for a community of <strong>200 Awakening Allies</strong>, gathered around healing, empowerment, spiritual growth, and conscious transformation.</textarea>
-  <label>Paragraph 4</label>
-  <textarea id="bio4">Before and during your journey, my intention is to help you feel <strong>grounded, seen, and energetically open</strong> — so you can receive the full depth of your own remembrance and transformation.</textarea>
-
-  <h2>Back — Tags</h2>
-  <div class="row-3">
-    <div><input id="t1" value="Energy Healing"></div>
-    <div><input id="t2" value="Soul Readings"></div>
-    <div><input id="t3" value="Human Design"></div>
-    <div><input id="t4" value="Numerology"></div>
-    <div><input id="t5" value="Astrology"></div>
-    <div><input id="t6" value="Life Coaching"></div>
-    <div><input id="t7" value="Ancestral Work"></div>
-  </div>
-
-  <h2>Back — Footer</h2>
-  <label>Back Flip Hint</label>
-  <input id="bHint" value="Tap to flip back">
-
-  <div class="btn-row">
-    <button class="btn btn-primary" onclick="generateCard()">Generate &amp; Download</button>
-    <button class="btn btn-secondary" onclick="resetForm()">Reset to Defaults</button>
-  </div>
-  <div id="genMsg"></div>
 </div>
 
 <script>
@@ -183,34 +360,25 @@
 
   function sha256(str) {
     var encoder = new TextEncoder();
-    var data = encoder.encode(str);
-    return crypto.subtle.digest('SHA-256', data).then(function(buffer) {
+    return crypto.subtle.digest('SHA-256', encoder.encode(str)).then(function(buffer) {
       return Array.prototype.map.call(new Uint8Array(buffer), function(x) {
         return ('00' + x.toString(16)).slice(-2);
       }).join('');
     });
   }
 
-  /* Check if already logged in */
-  if (sessionStorage.getItem('admin_auth') === '1') {
-    showEditor();
-  }
+  if (sessionStorage.getItem('admin_auth') === '1') showEditor();
 
-  /* Set password hash on first visit or use stored */
   var storedHash = localStorage.getItem('admin_pass_hash');
   if (storedHash) {
     PASSWORD_HASH = storedHash;
   } else {
-    /* Default password: tindi2024 — SHA-256 hash */
     sha256('tindi2024').then(function(h) {
       PASSWORD_HASH = h;
-      if (!localStorage.getItem('admin_pass_hash')) {
-        localStorage.setItem('admin_pass_hash', h);
-      }
+      if (!localStorage.getItem('admin_pass_hash')) localStorage.setItem('admin_pass_hash', h);
     });
   }
 
-  /* Ensure hash is set before login */
   function ensureHash(cb) {
     if (PASSWORD_HASH) { cb(); return; }
     var stored = localStorage.getItem('admin_pass_hash');
@@ -245,155 +413,167 @@
   function showEditor() {
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('editorScreen').classList.remove('hidden');
+    renderPreview();
+    bindInputs();
   }
 
-  /* --- Generate Card --- */
+  /* ── Live preview rendering ── */
+  function v(id) { return document.getElementById(id).value; }
+
+  function renderFront() {
+    var svgCircle = '<svg class="sacred-bg-preview" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg"><circle cx="90" cy="90" r="75" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="90" cy="90" r="50" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="115" cy="90" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="65" cy="90" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="102" cy="68" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="78" cy="68" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="102" cy="112" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="78" cy="112" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/></svg>';
+
+    return '' +
+    '<div class="card-top-preview">' + svgCircle +
+    '<div class="hero-row-preview">' +
+    '<div class="hero-text-preview">' +
+    '<div class="eyebrow-preview">' + v('fEyebrow') + '</div>' +
+    '<div class="name-preview">' + v('fName1') + '<br><em>' + v('fName2') + '</em></div>' +
+    '<div class="divider-line-preview"></div>' +
+    '<div class="titles-preview">' + v('fTitles1') + '<br>' + v('fTitles2') + '</div>' +
+    '</div>' +
+    '<div class="hero-photo-preview" style="background-image:url(assets/tindi_portrait.jpeg);"></div>' +
+    '</div></div>' +
+    '<div class="card-body-preview">' +
+    '<div class="years-row-preview">' +
+    '<div class="year-pill-preview"><span class="year-num-preview">' + v('s1num') + '</span><span class="year-label-preview">' + v('s1label') + '</span></div>' +
+    '<div class="year-pill-preview"><span class="year-num-preview">' + v('s2num') + '</span><span class="year-label-preview">' + v('s2label') + '</span></div>' +
+    '<div class="year-pill-preview"><span class="year-num-preview">' + v('s3num') + '</span><span class="year-label-preview">' + v('s3label') + '</span></div>' +
+    '</div>' +
+    '<div class="body-text-preview">' + v('fBody') + '</div>' +
+    '<div class="pillars-preview">' +
+    '<div class="pillar-preview"><span class="pillar-dot-preview"></span>' + v('p1') + '</div>' +
+    '<div class="pillar-preview"><span class="pillar-dot-preview"></span>' + v('p2') + '</div>' +
+    '<div class="pillar-preview"><span class="pillar-dot-preview"></span>' + v('p3') + '</div>' +
+    '<div class="pillar-preview"><span class="pillar-dot-preview"></span>' + v('p4') + '</div>' +
+    '<div class="pillar-preview"><span class="pillar-dot-preview"></span>' + v('p5') + '</div>' +
+    '<div class="pillar-preview"><span class="pillar-dot-preview"></span>' + v('p6') + '</div>' +
+    '</div>' +
+    '<div class="intention-block-preview">' +
+    '<div class="intention-label-preview">' + v('fIntentionLabel') + '</div>' +
+    '<div class="intention-text-preview">' + v('fIntention') + '</div>' +
+    '</div></div>' +
+    '<div class="front-footer-preview"><div class="front-hint-preview">' +
+    '<svg viewBox="0 0 20 20" width="11" height="11" fill="none" stroke="#b8a898" stroke-width="1.5" stroke-linecap="round"><path d="M4 10h12M10 4l6 6-6 6"/></svg>' +
+    v('fHint') + '</div></div>';
+  }
+
+  function renderBack() {
+    var svgCircleBack = '<svg class="back-sacred-preview" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="100" cy="100" r="55" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="127" cy="100" r="27" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="73" cy="100" r="27" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="113" cy="75" r="27" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="87" cy="75" r="27" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="113" cy="125" r="27" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="87" cy="125" r="27" fill="none" stroke="#b8956a" stroke-width="0.5"/></svg>';
+
+    var tags = [v('t1'), v('t2'), v('t3'), v('t4'), v('t5'), v('t6'), v('t7')];
+    var tagsHTML = '';
+    for (var i = 0; i < tags.length; i++) {
+      if (tags[i]) tagsHTML += '<span class="tag-preview">' + tags[i] + '</span>';
+    }
+
+    return '' +
+    '<div class="back-top-preview">' + svgCircleBack +
+    '<div class="back-eyebrow-preview">' + v('bEyebrow') + '</div>' +
+    '<div class="back-name-preview">' + v('bName1') + '<br><em>' + v('bName2') + '</em></div>' +
+    '<div class="back-divider-preview"></div></div>' +
+    '<div class="back-body-preview">' +
+    '<p class="bio-para-preview">' + v('bio1') + '</p>' +
+    '<p class="bio-para-preview">' + v('bio2') + '</p>' +
+    '<p class="bio-para-preview">' + v('bio3') + '</p>' +
+    '<p class="bio-para-preview">' + v('bio4') + '</p>' +
+    '<div class="back-tags-preview">' + tagsHTML + '</div></div>' +
+    '<div class="back-footer-preview"><div class="flip-hint-preview">' +
+    '<svg class="flip-icon-preview" viewBox="0 0 20 20" fill="none" stroke="#5c5040" stroke-width="1.5" stroke-linecap="round"><path d="M3 10a7 7 0 0114 0M17 10l-2.5-3M17 10l-2.5 3"/></svg>' +
+    v('bHint') + '</div></div>';
+  }
+
+  var debounceTimer;
+  function renderPreview() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() {
+      document.getElementById('frontPreview').innerHTML = renderFront();
+      document.getElementById('backPreview').innerHTML = renderBack();
+    }, 200);
+  }
+
+  function bindInputs() {
+    var inputs = document.querySelectorAll('#editorPanel input, #editorPanel textarea');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener('input', function() {
+        this.classList.add('changed');
+        renderPreview();
+      });
+    }
+  }
+
+  /* ── Generate & Download ── */
   window.generateCard = function() {
     var g = function(id) { return document.getElementById(id).value; };
 
-    /* Build title string */
     var pageTitle = g('pageTitle').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     var ogDesc = g('ogDesc').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-    var fEyebrow = g('fEyebrow');
+    var twitterDesc = g('fBody').length > 120 ? g('fBody').substring(0, 117) + '...' : g('fBody');
     var fName1 = g('fName1');
     var fName2 = g('fName2');
-    var fTitles1 = g('fTitles1');
-    var fTitles2 = g('fTitles2');
 
-    var s1num = g('s1num');
-    var s1label = g('s1label');
-    var s2num = g('s2num');
-    var s2label = g('s2label');
-    var s3num = g('s3num');
-    var s3label = g('s3label');
+    var meta = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n\n';
+    meta += '<!-- Open Graph / Social Preview -->\n';
+    meta += '<meta property="og:type" content="profile" />\n';
+    meta += '<meta property="og:title" content="' + pageTitle + '" />\n';
+    meta += '<meta property="og:description" content="' + ogDesc + '" />\n';
+    meta += '<meta property="og:url" content="https://tich-labs.github.io/tindi-selma/" />\n';
+    meta += '<meta property="og:image" content="https://tich-labs.github.io/tindi-selma/assets/og-image.png" />\n';
+    meta += '<meta property="og:image:width" content="1200" />\n';
+    meta += '<meta property="og:image:height" content="630" />\n';
+    meta += '<meta property="profile:first_name" content="' + fName1 + '" />\n';
+    meta += '<meta property="profile:last_name" content="' + fName2 + '" />\n\n';
+    meta += '<!-- Twitter Card -->\n';
+    meta += '<meta name="twitter:card" content="summary_large_image" />\n';
+    meta += '<meta name="twitter:title" content="' + pageTitle + '" />\n';
+    meta += '<meta name="twitter:description" content="' + twitterDesc + '" />\n';
+    meta += '<meta name="twitter:image" content="https://tich-labs.github.io/tindi-selma/assets/og-image.png" />\n\n';
+    meta += '<!-- Theme -->\n';
+    meta += '<meta name="theme-color" content="#0f0d0a" />\n';
+    meta += '<meta name="apple-mobile-web-app-capable" content="yes" />\n';
+    meta += '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />\n\n';
+    meta += '<title>' + pageTitle + '</title>\n\n';
 
-    var fBody = g('fBody');
-    var p1 = g('p1');
-    var p2 = g('p2');
-    var p3 = g('p3');
-    var p4 = g('p4');
-    var p5 = g('p5');
-    var p6 = g('p6');
-    var fIntentionLabel = g('fIntentionLabel');
-    var fIntention = g('fIntention');
-    var fHint = g('fHint');
-
-    var bEyebrow = g('bEyebrow');
-    var bName1 = g('bName1');
-    var bName2 = g('bName2');
-    var bio1 = g('bio1');
-    var bio2 = g('bio2');
-    var bio3 = g('bio3');
-    var bio4 = g('bio4');
-    var t1 = g('t1');
-    var t2 = g('t2');
-    var t3 = g('t3');
-    var t4 = g('t4');
-    var t5 = g('t5');
-    var t6 = g('t6');
-    var t7 = g('t7');
-    var bHint = g('bHint');
-
-    /* Build twitter desc (truncated) */
-    var twitterDesc = fBody.length > 120 ? fBody.substring(0, 117) + '...' : fBody;
-
-    var html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n\n';
-    html += '<!-- Open Graph / Social Preview -->\n';
-    html += '<meta property="og:type" content="profile" />\n';
-    html += '<meta property="og:title" content="' + pageTitle + '" />\n';
-    html += '<meta property="og:description" content="' + ogDesc + '" />\n';
-    html += '<meta property="og:url" content="https://tich-labs.github.io/tindi-selma/" />\n';
-    html += '<meta property="og:image" content="https://tich-labs.github.io/tindi-selma/assets/og-image.png" />\n';
-    html += '<meta property="og:image:width" content="1200" />\n';
-    html += '<meta property="og:image:height" content="630" />\n';
-    html += '<meta property="profile:first_name" content="' + fName1 + '" />\n';
-    html += '<meta property="profile:last_name" content="' + fName2 + '" />\n\n';
-    html += '<!-- Twitter Card -->\n';
-    html += '<meta name="twitter:card" content="summary_large_image" />\n';
-    html += '<meta name="twitter:title" content="' + pageTitle + '" />\n';
-    html += '<meta name="twitter:description" content="' + twitterDesc + '" />\n';
-    html += '<meta name="twitter:image" content="https://tich-labs.github.io/tindi-selma/assets/og-image.png" />\n\n';
-    html += '<!-- Theme -->\n';
-    html += '<meta name="theme-color" content="#0f0d0a" />\n';
-    html += '<meta name="apple-mobile-web-app-capable" content="yes" />\n';
-    html += '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />\n\n';
-    html += '<title>' + pageTitle + '</title>\n\n';
-
-    /* Now get the template from the page itself */
-    var templateEl = document.getElementById('cardTemplate');
-    var template = templateEl.value;
-
-    /* Replace content placeholders */
     var placeholders = {
-      '{{PAGE_TITLE}}': pageTitle,
-      '{{OG_DESC}}': ogDesc,
-      '{{TWITTER_DESC}}': twitterDesc,
-      '{{F_NAME1}}': fName1,
-      '{{F_NAME2}}': fName2,
-      '{{F_EYEBROW}}': fEyebrow,
-      '{{F_TITLES1}}': fTitles1,
-      '{{F_TITLES2}}': fTitles2,
-      '{{S1NUM}}': s1num,
-      '{{S1LABEL}}': s1label,
-      '{{S2NUM}}': s2num,
-      '{{S2LABEL}}': s2label,
-      '{{S3NUM}}': s3num,
-      '{{S3LABEL}}': s3label,
-      '{{F_BODY}}': fBody,
-      '{{P1}}': p1,
-      '{{P2}}': p2,
-      '{{P3}}': p3,
-      '{{P4}}': p4,
-      '{{P5}}': p5,
-      '{{P6}}': p6,
-      '{{F_INTENTION_LABEL}}': fIntentionLabel,
-      '{{F_INTENTION}}': fIntention,
-      '{{F_HINT}}': fHint,
-      '{{B_EYEBROW}}': bEyebrow,
-      '{{B_NAME1}}': bName1,
-      '{{B_NAME2}}': bName2,
-      '{{BIO1}}': bio1,
-      '{{BIO2}}': bio2,
-      '{{BIO3}}': bio3,
-      '{{BIO4}}': bio4,
-      '{{T1}}': t1,
-      '{{T2}}': t2,
-      '{{T3}}': t3,
-      '{{T4}}': t4,
-      '{{T5}}': t5,
-      '{{T6}}': t6,
-      '{{T7}}': t7,
-      '{{B_HINT}}': bHint
+      '{{PAGE_TITLE}}': pageTitle, '{{OG_DESC}}': ogDesc, '{{TWITTER_DESC}}': twitterDesc,
+      '{{F_NAME1}}': g('fName1'), '{{F_NAME2}}': g('fName2'), '{{F_EYEBROW}}': g('fEyebrow'),
+      '{{F_TITLES1}}': g('fTitles1'), '{{F_TITLES2}}': g('fTitles2'),
+      '{{S1NUM}}': g('s1num'), '{{S1LABEL}}': g('s1label'), '{{S2NUM}}': g('s2num'),
+      '{{S2LABEL}}': g('s2label'), '{{S3NUM}}': g('s3num'), '{{S3LABEL}}': g('s3label'),
+      '{{F_BODY}}': g('fBody'), '{{P1}}': g('p1'), '{{P2}}': g('p2'), '{{P3}}': g('p3'),
+      '{{P4}}': g('p4'), '{{P5}}': g('p5'), '{{P6}}': g('p6'),
+      '{{F_INTENTION_LABEL}}': g('fIntentionLabel'), '{{F_INTENTION}}': g('fIntention'),
+      '{{F_HINT}}': g('fHint'), '{{B_EYEBROW}}': g('bEyebrow'),
+      '{{B_NAME1}}': g('bName1'), '{{B_NAME2}}': g('bName2'),
+      '{{BIO1}}': g('bio1'), '{{BIO2}}': g('bio2'), '{{BIO3}}': g('bio3'), '{{BIO4}}': g('bio4'),
+      '{{T1}}': g('t1'), '{{T2}}': g('t2'), '{{T3}}': g('t3'), '{{T4}}': g('t4'),
+      '{{T5}}': g('t5'), '{{T6}}': g('t6'), '{{T7}}': g('t7'), '{{B_HINT}}': g('bHint')
     };
 
+    var templateEl = document.getElementById('cardTemplate');
+    var template = templateEl.value;
     for (var key in placeholders) {
       template = template.split(key).join(placeholders[key]);
     }
 
-    var fullHTML = html + template;
-
-    /* Download */
-    var blob = new Blob([fullHTML], { type: 'text/html' });
+    var blob = new Blob([meta + template], { type: 'text/html' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'index.html';
     a.click();
     URL.revokeObjectURL(a.href);
 
-    document.getElementById('genMsg').innerHTML = '<div class="msg msg-success">index.html downloaded! Replace the file in your repo and push to update the live card.</div>';
+    document.getElementById('genMsg').innerHTML = '<div class="msg msg-success">index.html downloaded! Replace the file in your repo and push.</div>';
     setTimeout(function() { document.getElementById('genMsg').innerHTML = ''; }, 6000);
   };
 
   window.resetForm = function() {
-    if (confirm('Reset all fields to default values?')) {
-      location.reload();
-    }
+    if (confirm('Reset all fields to default values?')) location.reload();
   };
 })();
 </script>
 
-<!-- Template hidden textarea -->
+<!-- Template for download -->
 <textarea id="cardTemplate" style="display:none;" readonly>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="apple-touch-icon" href="assets/favicon.svg" />
@@ -576,24 +756,6 @@
     background: #b8956a; flex-shrink: 0;
   }
 
-  .community-bar {
-    background: #1a1410;
-    padding: clamp(0.7rem, 2.5vw, 0.9rem) clamp(0.9rem, 3vw, 1.2rem);
-    display: flex; align-items: center; gap: 1rem;
-    margin-bottom: clamp(1.2rem, 4vw, 1.8rem);
-  }
-  .community-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(22px, 6vw, 28px);
-    font-weight: 400; color: #b8956a;
-    line-height: 1; flex-shrink: 0;
-  }
-  .community-text {
-    font-size: clamp(9px, 2vw, 11px);
-    font-weight: 300; color: #a89880;
-    line-height: 1.5; letter-spacing: 0.05em;
-  }
-
   .intention-block {
     border-left: 1.5px solid #b8956a;
     padding-left: 1rem;
@@ -701,12 +863,6 @@
     width: 16px; height: 16px; opacity: 0.6;
   }
 
-  .back-mark {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(16px, 3.5vw, 18px);
-    font-style: italic; color: #b8956a; opacity: 0.7;
-  }
-
   /* Front footer hint */
   .front-footer {
     padding: clamp(0.8rem, 2.5vw, 1rem) clamp(1.5rem, 5vw, 2.5rem);
@@ -765,58 +921,20 @@
   }
   .share-icon:hover { background: #1a1410; border-color: #b8956a; }
   .share-icon svg { width: 18px; height: 18px; }
-  .share-label {
-    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: #5c5040; text-align: center; margin-top: 0.35rem;
-    font-family: 'Jost', sans-serif;
-  }
 
   @media (max-width: 480px) {
     .scene { aspect-ratio: 9 / 14.5; }
   }
 
-  /* ── PRINT STYLES ── */
   @media print {
-    body {
-      background: #fff;
-      padding: 0;
-      align-items: flex-start;
-    }
-    .share-wrap, .share-btn, .share-socials, .share-icon, .copied-msg {
-      display: none !important;
-    }
-    .scene {
-      width: 100%;
-      max-width: 100%;
-      cursor: default;
-      perspective: none;
-    }
-    .card-inner {
-      transform: none !important;
-      transition: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .card-face {
-      position: relative !important;
-      backface-visibility: visible !important;
-      -webkit-backface-visibility: visible !important;
-      page-break-inside: avoid;
-    }
-    .back {
-      transform: none !important;
-      position: relative !important;
-      top: auto !important; left: auto !important;
-      margin-top: 0.5rem;
-    }
-    .front-footer, .back-footer {
-      display: none;
-    }
-    @page {
-      margin: 0.5cm;
-      size: auto;
-    }
+    body { background: #fff; padding: 0; align-items: flex-start; }
+    .share-wrap, .share-btn, .share-socials, .share-icon, .copied-msg { display: none !important; }
+    .scene { width: 100%; max-width: 100%; cursor: default; perspective: none; }
+    .card-inner { transform: none !important; transition: none; display: flex; flex-direction: column; gap: 1rem; }
+    .card-face { position: relative !important; backface-visibility: visible !important; -webkit-backface-visibility: visible !important; page-break-inside: avoid; }
+    .back { transform: none !important; position: relative !important; top: auto !important; left: auto !important; margin-top: 0.5rem; }
+    .front-footer, .back-footer { display: none; }
+    @page { margin: 0.5cm; size: auto; }
   }
 </style>
 </head>
@@ -825,7 +943,6 @@
 <div class="scene" id="scene" onclick="toggleFlip()" role="button" aria-label="Click to flip card" tabindex="0">
   <div class="card-inner" id="cardInner">
 
-    <!-- FRONT -->
     <div class="card-face front">
       <div class="card-top">
         <svg class="sacred-bg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -851,27 +968,13 @@
           <div class="hero-photo" style="background-image:url(assets/tindi_portrait.jpeg);"></div>
         </div>
       </div>
-
       <div class="card-body">
         <div class="years-row">
-          <div class="year-pill">
-            <span class="year-num">{{S1NUM}}</span>
-            <span class="year-label">{{S1LABEL}}</span>
-          </div>
-          <div class="year-pill">
-            <span class="year-num">{{S2NUM}}</span>
-            <span class="year-label">{{S2LABEL}}</span>
-          </div>
-          <div class="year-pill">
-            <span class="year-num">{{S3NUM}}</span>
-            <span class="year-label">{{S3LABEL}}</span>
-          </div>
+          <div class="year-pill"><span class="year-num">{{S1NUM}}</span><span class="year-label">{{S1LABEL}}</span></div>
+          <div class="year-pill"><span class="year-num">{{S2NUM}}</span><span class="year-label">{{S2LABEL}}</span></div>
+          <div class="year-pill"><span class="year-num">{{S3NUM}}</span><span class="year-label">{{S3LABEL}}</span></div>
         </div>
-
-        <div class="body-text">
-          {{F_BODY}}
-        </div>
-
+        <div class="body-text">{{F_BODY}}</div>
         <div class="pillars">
           <div class="pillar"><span class="pillar-dot"></span>{{P1}}</div>
           <div class="pillar"><span class="pillar-dot"></span>{{P2}}</div>
@@ -880,24 +983,19 @@
           <div class="pillar"><span class="pillar-dot"></span>{{P5}}</div>
           <div class="pillar"><span class="pillar-dot"></span>{{P6}}</div>
         </div>
-
         <div class="intention-block">
           <div class="intention-label">{{F_INTENTION_LABEL}}</div>
           <div class="intention-text">{{F_INTENTION}}</div>
         </div>
       </div>
-
       <div class="front-footer">
         <div class="front-hint">
-          <svg viewBox="0 0 20 20" width="13" height="13" fill="none" stroke="#b8a898" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-            <path d="M4 10h12M10 4l6 6-6 6"/>
-          </svg>
+          <svg viewBox="0 0 20 20" width="13" height="13" fill="none" stroke="#b8a898" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 10h12M10 4l6 6-6 6"/></svg>
           {{F_HINT}}
         </div>
       </div>
     </div>
 
-    <!-- BACK -->
     <div class="card-face back">
       <div class="back-top">
         <svg class="back-sacred" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -914,36 +1012,19 @@
         <div class="back-name">{{B_NAME1}}<br><em>{{B_NAME2}}</em></div>
         <div class="back-divider"></div>
       </div>
-
       <div class="back-body">
-        <p class="bio-para">
-          {{BIO1}}
-        </p>
-        <p class="bio-para">
-          {{BIO2}}
-        </p>
-        <p class="bio-para">
-          {{BIO3}}
-        </p>
-        <p class="bio-para">
-          {{BIO4}}
-        </p>
+        <p class="bio-para">{{BIO1}}</p>
+        <p class="bio-para">{{BIO2}}</p>
+        <p class="bio-para">{{BIO3}}</p>
+        <p class="bio-para">{{BIO4}}</p>
         <div class="back-tags">
-          <span class="tag">{{T1}}</span>
-          <span class="tag">{{T2}}</span>
-          <span class="tag">{{T3}}</span>
-          <span class="tag">{{T4}}</span>
-          <span class="tag">{{T5}}</span>
-          <span class="tag">{{T6}}</span>
-          <span class="tag">{{T7}}</span>
+          <span class="tag">{{T1}}</span><span class="tag">{{T2}}</span><span class="tag">{{T3}}</span>
+          <span class="tag">{{T4}}</span><span class="tag">{{T5}}</span><span class="tag">{{T6}}</span><span class="tag">{{T7}}</span>
         </div>
       </div>
-
       <div class="back-footer">
         <div class="flip-hint">
-          <svg class="flip-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-            <path d="M3 10a7 7 0 0114 0M17 10l-2.5-3M17 10l-2.5 3"/>
-          </svg>
+          <svg class="flip-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 10a7 7 0 0114 0M17 10l-2.5-3M17 10l-2.5 3"/></svg>
           {{B_HINT}}
         </div>
       </div>
@@ -974,97 +1055,39 @@
     </button>
   </div>
   <button class="share-btn" onclick="downloadCard()">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 3v10M6 9l4 4 4-4"/><path d="M3 16h14"/>
-    </svg>
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10M6 9l4 4 4-4"/><path d="M3 16h14"/></svg>
     Download HTML
   </button>
   <button class="share-btn" onclick="downloadPDF()">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 4h12v12H4z"/><path d="M7 12l3 3 3-3"/><path d="M10 7v8"/>
-    </svg>
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12v12H4z"/><path d="M7 12l3 3 3-3"/><path d="M10 7v8"/></svg>
     Download PDF
   </button>
   <div class="copied-msg" id="copiedMsg">Link copied to clipboard</div>
 </div>
 
 <script>
-  function toggleFlip() {
-    document.getElementById('scene').classList.toggle('flipped');
-  }
-
+  function toggleFlip() { document.getElementById('scene').classList.toggle('flipped'); }
   document.getElementById('scene').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFlip(); }
   });
-
   function copyLink() {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(function() {
-      const msg = document.getElementById('copiedMsg');
-      msg.classList.add('show');
-      setTimeout(function() { msg.classList.remove('show'); }, 2500);
+    var u = window.location.href;
+    navigator.clipboard.writeText(u).then(function() {
+      var m = document.getElementById('copiedMsg'); m.classList.add('show');
+      setTimeout(function() { m.classList.remove('show'); }, 2500);
     }).catch(function() {
-      const msg = document.getElementById('copiedMsg');
-      msg.textContent = 'Copy the URL from your address bar';
-      msg.classList.add('show');
-      setTimeout(function() { msg.classList.remove('show'); }, 2500);
+      var m = document.getElementById('copiedMsg'); m.textContent = 'Copy the URL from your address bar';
+      m.classList.add('show'); setTimeout(function() { m.classList.remove('show'); }, 2500);
     });
   }
-
-  function shareWhatsApp() {
-    var url = encodeURIComponent(window.location.href);
-    var text = encodeURIComponent('Rose Selma Tindi Amadi — Energy Healer & Soul Alignment Facilitator');
-    window.open('https://wa.me/?text=' + text + '%20' + url, '_blank');
-  }
-
-  function shareTwitter() {
-    var url = encodeURIComponent(window.location.href);
-    var text = encodeURIComponent('Rose Selma Tindi Amadi — Energy Healer & Soul Alignment Facilitator');
-    window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=600,height=400');
-  }
-
-  function shareLinkedIn() {
-    var url = encodeURIComponent(window.location.href);
-    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + url, '_blank', 'width=600,height=500');
-  }
-
-  function shareFacebook() {
-    var url = encodeURIComponent(window.location.href);
-    window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
-  }
-
-  function nativeShare() {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Rose Selma Tindi Amadi — Energy Healer & Soul Alignment Facilitator',
-        text: 'Supporting people through transformation, self-discovery, and deeper alignment.',
-        url: window.location.href
-      }).catch(function() {});
-    } else {
-      copyLink();
-    }
-  }
-
-  function downloadCard() {
-    var html = document.documentElement.outerHTML;
-    var blob = new Blob([html], { type: 'text/html' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'rose-selma-card.html';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function downloadPDF() {
-    window.print();
-  }
-
-  /* Register Service Worker for offline support */
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/tindi-selma/sw.js').catch(function() {});
-    });
-  }
+  function shareWhatsApp() { var u=encodeURIComponent(window.location.href); var t=encodeURIComponent('Rose Selma Tindi Amadi'); window.open('https://wa.me/?text='+t+'%20'+u,'_blank'); }
+  function shareTwitter() { var u=encodeURIComponent(window.location.href); var t=encodeURIComponent('Rose Selma Tindi Amadi — Energy Healer'); window.open('https://twitter.com/intent/tweet?text='+t+'&url='+u,'_blank','width=600,height=400'); }
+  function shareLinkedIn() { var u=encodeURIComponent(window.location.href); window.open('https://www.linkedin.com/sharing/share-offsite/?url='+u,'_blank','width=600,height=500'); }
+  function shareFacebook() { var u=encodeURIComponent(window.location.href); window.open('https://www.facebook.com/sharer/sharer.php?u='+u,'_blank','width=600,height=400'); }
+  function nativeShare() { if(navigator.share){navigator.share({title:'Rose Selma Tindi Amadi',text:'Energy Healer & Soul Alignment Facilitator',url:window.location.href}).catch(function(){});}else{copyLink();} }
+  function downloadCard() { var h=document.documentElement.outerHTML; var b=new Blob([h],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='rose-selma-card.html'; a.click(); URL.revokeObjectURL(a.href); }
+  function downloadPDF() { window.print(); }
+  if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/tindi-selma/sw.js').catch(function(){});});}
 </script>
 </body>
 </html>
