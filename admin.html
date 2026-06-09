@@ -707,7 +707,6 @@ body {
 <link rel="apple-touch-icon" href="assets/favicon.svg" />
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1056,14 +1055,17 @@ body {
   }
 
   @media print {
-    body { background: #fff; padding: 0; align-items: flex-start; }
+    @page { size: landscape; margin: 12mm; }
+    body { background: #fff; padding: 0; align-items: flex-start; justify-content: flex-start; }
     .share-wrap, .share-btn, .share-socials, .share-icon, .copied-msg { display: none !important; }
     .scene { width: 100%; max-width: 100%; cursor: default; perspective: none; }
-    .card-inner { transform: none !important; transition: none; display: flex; flex-direction: column; gap: 1rem; }
-    .card-face { position: relative !important; backface-visibility: visible !important; -webkit-backface-visibility: visible !important; page-break-inside: avoid; }
-    .back { transform: none !important; position: relative !important; top: auto !important; left: auto !important; margin-top: 0.5rem; }
+    .card-inner { transform: none !important; transition: none !important; display: flex; flex-direction: row; gap: 3mm; align-items: flex-start; }
+    .card-face { position: relative !important; backface-visibility: visible !important; -webkit-backface-visibility: visible !important; page-break-inside: avoid; flex: 1; min-width: 0; }
+    .front { border: 0.5px solid #d9cfc0; }
+    .back { transform: none !important; position: relative !important; top: auto !important; left: auto !important; border: 0.5px solid #2e271f; }
     .front-footer, .back-footer { display: none; }
-    @page { margin: 0.5cm; size: auto; }
+    .card-top, .back-top { padding: 3mm 4mm 2mm; }
+    .card-body, .back-body { padding: 2mm 4mm 3mm; }
   }
 </style>
 </head>
@@ -1179,18 +1181,11 @@ body {
     <button class="share-icon" onclick="copyLink()" title="Copy link" aria-label="Copy link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
-    <button class="share-icon" onclick="nativeShare()" title="More share options" aria-label="More share options">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    </button>
   </div>
-  <button class="share-btn" onclick="downloadCard()">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10M6 9l4 4 4-4"/><path d="M3 16h14"/></svg>
-    Download HTML
+  <button class="share-btn" onclick="window.print()">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M3 15l4-4 2 2 5-5 3 3v4"/></svg>
+    Download Card
   </button>
-   <button class="share-btn" onclick="downloadImage()">
-     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M3 15l4-4 2 2 5-5 3 3v4"/></svg>
-     Download Image
-   </button>
   <div class="copied-msg" id="copiedMsg">Link copied to clipboard</div>
 </div>
 
@@ -1213,9 +1208,6 @@ body {
   function shareTwitter() { var u=encodeURIComponent(window.location.href); var t=encodeURIComponent('Rose Selma Tindi Amadi — Energy Healer'); window.open('https://twitter.com/intent/tweet?text='+t+'&url='+u,'_blank','width=600,height=400'); }
   function shareLinkedIn() { var u=encodeURIComponent(window.location.href); window.open('https://www.linkedin.com/sharing/share-offsite/?url='+u,'_blank','width=600,height=500'); }
   function shareFacebook() { var u=encodeURIComponent(window.location.href); window.open('https://www.facebook.com/sharer/sharer.php?u='+u,'_blank','width=600,height=400'); }
-  function nativeShare() { var isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||('ontouchstart' in window);if(isMob&&navigator.share&&navigator.canShare){var d={title:'Rose Selma Tindi Amadi',text:'Energy Healer & Soul Alignment Facilitator',url:window.location.href};if(navigator.canShare(d)){navigator.share(d).catch(function(){copyLink();});}else{copyLink();}}else{copyLink();} }
-  function downloadCard() { var h=document.documentElement.outerHTML; var b=new Blob([h],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='rose-selma-card.html'; a.click(); URL.revokeObjectURL(a.href); }
-  function downloadImage() { if(typeof html2canvas==='undefined')return; var scene=document.getElementById('scene'); var cardInner=document.getElementById('cardInner'); var wasFlipped=scene.classList.contains('flipped'); var origTransform=cardInner.style.transform; var origTransition=cardInner.style.transition; cardInner.style.transition='none'; scene.classList.remove('flipped'); var frontEl=scene.querySelector('.front'); var backEl=scene.querySelector('.back'); var origBackVis=backEl.style.backfaceVisibility; var origWebkit=backEl.style.webkitBackfaceVisibility; var origBackPos=backEl.style.position; var origBackTrans=backEl.style.transform; backEl.style.backfaceVisibility='visible'; backEl.style.webkitBackfaceVisibility='visible'; backEl.style.position='relative'; backEl.style.transform='none'; requestAnimationFrame(function(){requestAnimationFrame(function(){html2canvas(cardInner,{backgroundColor:'#ffffff',scale:2,useCORS:true,allowTaint:true,logging:false,width:cardInner.scrollWidth,height:cardInner.scrollHeight}).then(function(canvas){cardInner.style.transform=origTransform;cardInner.style.transition=origTransition;backEl.style.backfaceVisibility=origBackVis;backEl.style.webkitBackfaceVisibility=origWebkit;backEl.style.position=origBackPos;backEl.style.transform=origBackTrans;if(wasFlipped)scene.classList.add('flipped');var halfH=canvas.height/2;var cardW=canvas.width;var cardH=halfH;var gap=40,pad=60;var totalW=cardW*2+gap+pad*2;var totalH=cardH+pad*2;var combined=document.createElement('canvas');combined.width=totalW;combined.height=totalH;var ctx=combined.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,totalW,totalH);ctx.drawImage(canvas,0,0,cardW,cardH,pad,pad,cardW,cardH);ctx.drawImage(canvas,0,cardH,cardW,cardH,pad+cardW+gap,pad,cardW,cardH);combined.toBlob(function(blob){var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='rose-selma-card.png';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);},'image/png');}).catch(function(){cardInner.style.transform=origTransform;cardInner.style.transition=origTransition;backEl.style.backfaceVisibility=origBackVis;backEl.style.webkitBackfaceVisibility=origWebkit;backEl.style.position=origBackPos;backEl.style.transform=origBackTrans;if(wasFlipped)scene.classList.add('flipped');});});}); }
   if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/tindi-selma/sw.js').catch(function(){});});}
 </script>
 </body>
