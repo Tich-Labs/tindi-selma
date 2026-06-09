@@ -662,12 +662,19 @@
   }
 
   function nativeShare() {
-    if (navigator.share) {
-      navigator.share({
+    /* Only use native share on mobile/touch devices */
+    var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || ('ontouchstart' in window);
+    if (isMobile && navigator.share && navigator.canShare) {
+      var data = {
         title: 'Rose Selma Tindi Amadi — Energy Healer & Soul Alignment Facilitator',
         text: 'Supporting people through transformation, self-discovery, and deeper alignment.',
         url: window.location.href
-      }).catch(function() {});
+      };
+      if (navigator.canShare(data)) {
+        navigator.share(data).catch(function() { copyLink(); });
+      } else {
+        copyLink();
+      }
     } else {
       copyLink();
     }
