@@ -32,6 +32,7 @@
 <link rel="apple-touch-icon" href="assets/favicon.svg" />
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -683,81 +684,105 @@
   }
 
   function downloadImage() {
-    /* Load html2canvas dynamically */
-    var script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-    script.onload = function() {
-      var scene = document.getElementById('scene');
-      var wasFlipped = scene.classList.contains('flipped');
+    if (typeof html2canvas === 'undefined') {
+      alert('Image library is loading, please try again in a moment.');
+      return;
+    }
 
-      /* Unflip to capture front */
-      scene.classList.remove('flipped');
+    /* Clone both card faces into a hidden capture area */
+    var frontEl = document.querySelector('.front');
+    var backEl = document.querySelector('.back');
 
-      /* Wait a frame for the transition to settle */
-      setTimeout(function() {
-        var frontEl = scene.querySelector('.front');
+    /* Read saved content for accurate capture */
+    applySavedContent();
 
-        html2canvas(frontEl, {
-          backgroundColor: '#faf7f2',
-          scale: 2,
-          useCORS: true,
-          allowTaint: true
-        }).then(function(frontCanvas) {
+    var capture = document.createElement('div');
+    capture.style.cssText = 'position:fixed;left:-9999px;top:0;display:flex;gap:40px;padding:40px;background:#fff;';
 
-          /* Flip to capture back */
-          scene.classList.add('flipped');
+    var frontClone = frontEl.cloneNode(true);
+    frontClone.style.cssText = 'width:440px;flex-shrink:0;position:relative;';
 
-          setTimeout(function() {
-            var backEl = scene.querySelector('.back');
+    var backClone = backEl.cloneNode(true);
+    backClone.style.cssText = 'width:440px;flex-shrink:0;position:relative;';
+    /* Remove 3D transform from back */
+    backClone.style.transform = 'none';
+    backClone.style.background = '#1a1410';
 
-            html2canvas(backEl, {
-              backgroundColor: '#1a1410',
-              scale: 2,
-              useCORS: true,
-              allowTaint: true
-            }).then(function(backCanvas) {
+    capture.appendChild(frontClone);
+    capture.appendChild(backClone);
+    document.body.appendChild(capture);
 
-              /* Restore original flip state */
-              if (!wasFlipped) scene.classList.remove('flipped');
+    html2canvas(capture, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    }).then(function(canvas) {
+      document.body.removeChild(capture);
 
-              /* Create combined landscape canvas */
-              var padding = 60;
-              var gap = 40;
-              var cardW = frontCanvas.width;
-              var cardH = frontCanvas.height;
-              var totalW = cardW * 2 + gap + padding * 2;
-              var totalH = cardH + padding * 2;
+      canvas.toBlob(function(blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'rose-selma-card.png';
+        a.click();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    }).catch(function(err) {
+      document.body.removeChild(capture);
+      console.error('Image capture failed:', err);
+      alert('Could not capture image. Please try again.');
+    });
+  }
 
-              var combined = document.createElement('canvas');
-              combined.width = totalW;
-              combined.height = totalH;
-              var ctx = combined.getContext('2d');
-
-              /* White background */
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, totalW, totalH);
-
-              /* Draw front card on left */
-              ctx.drawImage(frontCanvas, padding, padding, cardW, cardH);
-
-              /* Draw back card on right */
-              ctx.drawImage(backCanvas, padding + cardW + gap, padding, cardW, cardH);
-
-              /* Download */
-              combined.toBlob(function(blob) {
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = 'rose-selma-card.png';
-                a.click();
-                URL.revokeObjectURL(url);
-              }, 'image/png');
-            });
-          }, 850);
-        });
-      }, 100);
-    };
-    document.head.appendChild(script);
+  function applySavedContent() {
+    var saved = localStorage.getItem('cardContent');
+    if (!saved) return;
+    try {
+      var d = JSON.parse(saved);
+      function set(el, val) { if (el && val !== undefined) el.textContent = val; }
+      function setHTML(el, val) { if (el && val !== undefined) el.innerHTML = val; }
+      set(document.querySelector('.eyebrow'), d.fEyebrow);
+      var nameEl = document.querySelector('.name');
+      if (nameEl && d.fName1) nameEl.innerHTML = d.fName1 + '<br><em>' + (d.fName2 || '') + '</em>';
+      var titlesEl = document.querySelector('.titles');
+      if (titlesEl) titlesEl.innerHTML = (d.fTitles1 || '') + '<br>' + (d.fTitles2 || '');
+      var yNums = document.querySelectorAll('.year-num');
+      var yLabels = document.querySelectorAll('.year-label');
+      set(yNums[0], d.s1num); set(yLabels[0], d.s1label);
+      set(yNums[1], d.s2num); set(yLabels[1], d.s2label);
+      set(yNums[2], d.s3num); set(yLabels[2], d.s3label);
+      set(document.querySelector('.body-text'), d.fBody);
+      var pillars = document.querySelectorAll('.pillar');
+      var pVals = [d.p1, d.p2, d.p3, d.p4, d.p5, d.p6];
+      for (var i = 0; i < pillars.length && i < pVals.length; i++) {
+        if (pVals[i]) pillars[i].innerHTML = '<span class="pillar-dot"></span>' + pVals[i];
+      }
+      set(document.querySelector('.intention-label'), d.fIntentionLabel);
+      set(document.querySelector('.intention-text'), d.fIntention);
+      set(document.querySelector('.front-hint'), d.fHint);
+      set(document.querySelector('.back-eyebrow'), d.bEyebrow);
+      var bNameEl = document.querySelector('.back-name');
+      if (bNameEl && d.bName1) bNameEl.innerHTML = d.bName1 + '<br><em>' + (d.bName2 || '') + '</em>';
+      var bios = document.querySelectorAll('.bio-para');
+      setHTML(bios[0], d.bio1); setHTML(bios[1], d.bio2);
+      setHTML(bios[2], d.bio3); setHTML(bios[3], d.bio4);
+      var tags = document.querySelectorAll('.tag');
+      var tVals = [d.t1, d.t2, d.t3, d.t4, d.t5, d.t6, d.t7];
+      for (var j = 0; j < tags.length && j < tVals.length; j++) {
+        if (tVals[j]) tags[j].textContent = tVals[j];
+      }
+      var flipHints = document.querySelectorAll('.flip-hint');
+      if (flipHints.length && d.bHint) {
+        var svg = flipHints[0].querySelector('svg');
+        if (svg) {
+          flipHints[0].innerHTML = '';
+          flipHints[0].appendChild(svg.cloneNode(true));
+          flipHints[0].appendChild(document.createTextNode(' ' + d.bHint));
+        }
+      }
+    } catch(e) {}
   }
 
   /* Register Service Worker for offline support */
@@ -767,69 +792,7 @@
     });
   }
   /* Apply saved content from admin panel */
-  (function() {
-    var saved = localStorage.getItem('cardContent');
-    if (!saved) return;
-    try {
-      var d = JSON.parse(saved);
-      /* Helper: set text content */
-      function set(el, val) { if (el && val !== undefined) el.textContent = val; }
-      function setHTML(el, val) { if (el && val !== undefined) el.innerHTML = val; }
-
-      /* Front - Hero */
-      set(document.querySelector('.eyebrow'), d.fEyebrow);
-      var nameEl = document.querySelector('.name');
-      if (nameEl && d.fName1) nameEl.innerHTML = d.fName1 + '<br><em>' + (d.fName2 || '') + '</em>';
-      var titlesEl = document.querySelector('.titles');
-      if (titlesEl) titlesEl.innerHTML = (d.fTitles1 || '') + '<br>' + (d.fTitles2 || '');
-
-      /* Front - Stats */
-      var yearNums = document.querySelectorAll('.year-num');
-      var yearLabels = document.querySelectorAll('.year-label');
-      set(yearNums[0], d.s1num); set(yearLabels[0], d.s1label);
-      set(yearNums[1], d.s2num); set(yearLabels[1], d.s2label);
-      set(yearNums[2], d.s3num); set(yearLabels[2], d.s3label);
-
-      /* Front - Body */
-      set(document.querySelector('.body-text'), d.fBody);
-
-      var pillars = document.querySelectorAll('.pillar');
-      var pVals = [d.p1, d.p2, d.p3, d.p4, d.p5, d.p6];
-      for (var i = 0; i < pillars.length && i < pVals.length; i++) {
-        if (pVals[i]) pillars[i].innerHTML = '<span class="pillar-dot"></span>' + pVals[i];
-      }
-
-      set(document.querySelector('.intention-label'), d.fIntentionLabel);
-      set(document.querySelector('.intention-text'), d.fIntention);
-      set(document.querySelector('.front-hint'), d.fHint);
-
-      /* Back */
-      set(document.querySelector('.back-eyebrow'), d.bEyebrow);
-      var bNameEl = document.querySelector('.back-name');
-      if (bNameEl && d.bName1) bNameEl.innerHTML = d.bName1 + '<br><em>' + (d.bName2 || '') + '</em>';
-
-      var bios = document.querySelectorAll('.bio-para');
-      setHTML(bios[0], d.bio1); setHTML(bios[1], d.bio2);
-      setHTML(bios[2], d.bio3); setHTML(bios[3], d.bio4);
-
-      var tags = document.querySelectorAll('.tag');
-      var tVals = [d.t1, d.t2, d.t3, d.t4, d.t5, d.t6, d.t7];
-      for (var j = 0; j < tags.length && j < tVals.length; j++) {
-        if (tVals[j]) tags[j].textContent = tVals[j];
-      }
-
-      var flipHints = document.querySelectorAll('.flip-hint');
-      if (flipHints.length && d.bHint) {
-        /* flip-hint contains an SVG, so preserve it */
-        var svg = flipHints[0].querySelector('svg');
-        if (svg) {
-          flipHints[0].innerHTML = '';
-          flipHints[0].appendChild(svg.cloneNode(true));
-          flipHints[0].appendChild(document.createTextNode(' ' + d.bHint));
-        }
-      }
-    } catch(e) {}
-  })();
+  applySavedContent();
 </script>
 </body>
 </html>
