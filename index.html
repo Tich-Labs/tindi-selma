@@ -408,6 +408,50 @@
   @media (max-width: 480px) {
     .scene { aspect-ratio: 9 / 14.5; }
   }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    body {
+      background: #fff;
+      padding: 0;
+      align-items: flex-start;
+    }
+    .share-wrap, .share-btn, .share-socials, .share-icon, .copied-msg {
+      display: none !important;
+    }
+    .scene {
+      width: 100%;
+      max-width: 100%;
+      cursor: default;
+      perspective: none;
+    }
+    .card-inner {
+      transform: none !important;
+      transition: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .card-face {
+      position: relative !important;
+      backface-visibility: visible !important;
+      -webkit-backface-visibility: visible !important;
+      page-break-inside: avoid;
+    }
+    .back {
+      transform: none !important;
+      position: relative !important;
+      top: auto !important; left: auto !important;
+      margin-top: 0.5rem;
+    }
+    .front-footer, .back-footer {
+      display: none;
+    }
+    @page {
+      margin: 0.5cm;
+      size: auto;
+    }
+  }
 </style>
 </head>
 <body>
@@ -569,6 +613,12 @@
     </svg>
     Download HTML
   </button>
+  <button class="share-btn" onclick="downloadPDF()">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h12v12H4z"/><path d="M7 12l3 3 3-3"/><path d="M10 7v8"/>
+    </svg>
+    Download PDF
+  </button>
   <div class="copied-msg" id="copiedMsg">Link copied to clipboard</div>
 </div>
 
@@ -637,6 +687,10 @@
     a.download = 'rose-selma-card.html';
     a.click();
     URL.revokeObjectURL(a.href);
+  }
+
+  function downloadPDF() {
+    window.print();
   }
 
   /* Register Service Worker for offline support */
