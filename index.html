@@ -606,12 +606,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     </button>
   </div>
-  <button class="share-btn" onclick="downloadCard()">
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 3v10M6 9l4 4 4-4"/><path d="M3 16h14"/>
-    </svg>
-    Download HTML
-  </button>
   <button class="share-btn" onclick="downloadPDF()">
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 4h12v12H4z"/><path d="M7 12l3 3 3-3"/><path d="M10 7v8"/>
@@ -698,6 +692,70 @@
       navigator.serviceWorker.register('/tindi-selma/sw.js').catch(function() {});
     });
   }
+  /* Apply saved content from admin panel */
+  (function() {
+    var saved = localStorage.getItem('cardContent');
+    if (!saved) return;
+    try {
+      var d = JSON.parse(saved);
+      /* Helper: set text content */
+      function set(el, val) { if (el && val !== undefined) el.textContent = val; }
+      function setHTML(el, val) { if (el && val !== undefined) el.innerHTML = val; }
+
+      /* Front - Hero */
+      set(document.querySelector('.eyebrow'), d.fEyebrow);
+      var nameEl = document.querySelector('.name');
+      if (nameEl && d.fName1) nameEl.innerHTML = d.fName1 + '<br><em>' + (d.fName2 || '') + '</em>';
+      var titlesEl = document.querySelector('.titles');
+      if (titlesEl) titlesEl.innerHTML = (d.fTitles1 || '') + '<br>' + (d.fTitles2 || '');
+
+      /* Front - Stats */
+      var yearNums = document.querySelectorAll('.year-num');
+      var yearLabels = document.querySelectorAll('.year-label');
+      set(yearNums[0], d.s1num); set(yearLabels[0], d.s1label);
+      set(yearNums[1], d.s2num); set(yearLabels[1], d.s2label);
+      set(yearNums[2], d.s3num); set(yearLabels[2], d.s3label);
+
+      /* Front - Body */
+      set(document.querySelector('.body-text'), d.fBody);
+
+      var pillars = document.querySelectorAll('.pillar');
+      var pVals = [d.p1, d.p2, d.p3, d.p4, d.p5, d.p6];
+      for (var i = 0; i < pillars.length && i < pVals.length; i++) {
+        if (pVals[i]) pillars[i].innerHTML = '<span class="pillar-dot"></span>' + pVals[i];
+      }
+
+      set(document.querySelector('.intention-label'), d.fIntentionLabel);
+      set(document.querySelector('.intention-text'), d.fIntention);
+      set(document.querySelector('.front-hint'), d.fHint);
+
+      /* Back */
+      set(document.querySelector('.back-eyebrow'), d.bEyebrow);
+      var bNameEl = document.querySelector('.back-name');
+      if (bNameEl && d.bName1) bNameEl.innerHTML = d.bName1 + '<br><em>' + (d.bName2 || '') + '</em>';
+
+      var bios = document.querySelectorAll('.bio-para');
+      setHTML(bios[0], d.bio1); setHTML(bios[1], d.bio2);
+      setHTML(bios[2], d.bio3); setHTML(bios[3], d.bio4);
+
+      var tags = document.querySelectorAll('.tag');
+      var tVals = [d.t1, d.t2, d.t3, d.t4, d.t5, d.t6, d.t7];
+      for (var j = 0; j < tags.length && j < tVals.length; j++) {
+        if (tVals[j]) tags[j].textContent = tVals[j];
+      }
+
+      var flipHints = document.querySelectorAll('.flip-hint');
+      if (flipHints.length && d.bHint) {
+        /* flip-hint contains an SVG, so preserve it */
+        var svg = flipHints[0].querySelector('svg');
+        if (svg) {
+          flipHints[0].innerHTML = '';
+          flipHints[0].appendChild(svg.cloneNode(true));
+          flipHints[0].appendChild(document.createTextNode(' ' + d.bHint));
+        }
+      }
+    } catch(e) {}
+  })();
 </script>
 </body>
 </html>

@@ -62,6 +62,13 @@ body {
 .editor-panel .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 .editor-panel .row-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
 
+/* Character counter */
+.char-count {
+  font-size: 0.6rem; color: #5c5040; text-align: right;
+  margin-top: 0.15rem; margin-bottom: 0.3rem;
+}
+.char-count.warn { color: #c98a8a; }
+
 .btn-row { display: flex; gap: 0.6rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .btn {
   font-family: inherit; font-size: 0.7rem; font-weight: 500;
@@ -76,6 +83,32 @@ body {
 .msg { font-size: 0.7rem; padding: 0.5rem 0.8rem; border-radius: 2px; margin-top: 0.8rem; text-align: center; }
 .msg-success { background: #1a2a1a; color: #8ab88a; border: 0.5px solid #2a4a2a; }
 .msg-error { background: #2a1a1a; color: #c98a8a; border: 0.5px solid #4a2a2a; }
+
+/* Formatting toolbar */
+.fmt-bar {
+  display: flex; gap: 2px; margin-bottom: 0.3rem;
+}
+.fmt-btn {
+  font-family: inherit; font-size: 0.7rem; font-weight: 600;
+  padding: 0.25rem 0.55rem; cursor: pointer;
+  background: #2a2018; color: #8a7d6d; border: 0.5px solid #3d3020; border-radius: 2px;
+  transition: background 0.15s, color 0.15s;
+}
+.fmt-btn:hover { background: #3d3020; color: #e8dece; }
+.fmt-btn.active { background: #b8956a; color: #0f0d0a; border-color: #b8956a; }
+.fmt-btn-bold { font-weight: 700; }
+.fmt-btn-italic { font-style: italic; font-family: 'Georgia', serif; }
+
+.content-editable {
+  width: 100%; min-height: 52px; padding: 0.5rem 0.7rem;
+  background: #1a1410; border: 0.5px solid #3d3020; border-radius: 2px;
+  color: #e8dece; font-size: 0.8rem; font-family: inherit;
+  line-height: 1.5; outline: none; overflow-y: auto;
+  transition: border-color 0.15s;
+}
+.content-editable:focus { border-color: #b8956a; }
+.content-editable strong { font-weight: 600; color: #e8dece; }
+.content-editable em { font-style: italic; }
 
 /* ── PREVIEW card styles (mirrors index.html) ── */
 .preview-wrap { width: min(440px, 100%); }
@@ -257,85 +290,118 @@ body {
 
     <h2>Page Info</h2>
     <label>Page Title</label>
-    <input id="pageTitle" value="Rose Selma Tindi Amadi — Energy Healer &amp; Soul Alignment Facilitator">
+    <input id="pageTitle" maxlength="80" value="Rose Selma Tindi Amadi — Energy Healer &amp; Soul Alignment Facilitator">
+    <div class="char-count" id="count_pageTitle"></div>
     <label>OG Description (social previews)</label>
-    <textarea id="ogDesc">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence. Energy Healing · Soul Readings · Human Design · Numerology · Astrology · Life Coaching.</textarea>
+    <textarea id="ogDesc" maxlength="200">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence. Energy Healing · Soul Readings · Human Design · Numerology · Astrology · Life Coaching.</textarea>
+    <div class="char-count" id="count_ogDesc"></div>
 
     <h2>Front — Hero</h2>
     <label>Eyebrow / Tagline</label>
-    <input id="fEyebrow" value="Soul Alignment · Energy Healing · Intuitive Guidance">
+    <input id="fEyebrow" maxlength="55" value="Soul Alignment · Energy Healing · Intuitive Guidance">
+    <div class="char-count" id="count_fEyebrow"></div>
     <div class="row">
-      <div><label>Name Line 1</label><input id="fName1" value="Rose Selma"></div>
-      <div><label>Name Line 2 (italic)</label><input id="fName2" value="Tindi Amadi"></div>
+      <div><label>Name Line 1</label><input id="fName1" maxlength="25" value="Rose Selma"><div class="char-count" id="count_fName1"></div></div>
+      <div><label>Name Line 2 (italic)</label><input id="fName2" maxlength="25" value="Tindi Amadi"><div class="char-count" id="count_fName2"></div></div>
     </div>
     <div class="row">
-      <div><label>Titles Line 1</label><input id="fTitles1" value="Energy Healer · Intuitive Guide"></div>
-      <div><label>Titles Line 2</label><input id="fTitles2" value="Soul Alignment Facilitator · Life Coach"></div>
+      <div><label>Titles Line 1</label><input id="fTitles1" maxlength="45" value="Energy Healer · Intuitive Guide"><div class="char-count" id="count_fTitles1"></div></div>
+      <div><label>Titles Line 2</label><input id="fTitles2" maxlength="50" value="Soul Alignment Facilitator · Life Coach"><div class="char-count" id="count_fTitles2"></div></div>
     </div>
 
     <h2>Front — Stats</h2>
     <div class="row-3">
-      <div><label>Pill 1 Number</label><input id="s1num" value="15+"><label>Pill 1 Label</label><input id="s1label" value="yrs coaching"></div>
-      <div><label>Pill 2 Number</label><input id="s2num" value="5+"><label>Pill 2 Label</label><input id="s2label" value="yrs energy healing"></div>
+      <div><label>Pill 1 Number</label><input id="s1num" maxlength="5" value="15+"><div class="char-count" id="count_s1num"></div><label>Pill 1 Label</label><input id="s1label" maxlength="22" value="yrs coaching"><div class="char-count" id="count_s1label"></div></div>
+      <div><label>Pill 2 Number</label><input id="s2num" maxlength="5" value="5+"><div class="char-count" id="count_s2num"></div><label>Pill 2 Label</label><input id="s2label" maxlength="22" value="yrs energy healing"><div class="char-count" id="count_s2label"></div></div>
     </div>
     <div class="row-3">
-      <div style="grid-column:1/-1"><label>Pill 3 Number</label><input id="s3num" value="3"><label>Pill 3 Label</label><input id="s3label" value="yrs soul alignment"></div>
+      <div style="grid-column:1/-1"><label>Pill 3 Number</label><input id="s3num" maxlength="5" value="3"><div class="char-count" id="count_s3num"></div><label>Pill 3 Label</label><input id="s3label" maxlength="22" value="yrs soul alignment"><div class="char-count" id="count_s3label"></div></div>
     </div>
 
     <h2>Front — Body</h2>
     <label>Body Quote Text</label>
-    <textarea id="fBody">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence.</textarea>
+    <textarea id="fBody" maxlength="180">Supporting people through transformation, self-discovery, and deeper alignment with their authentic essence.</textarea>
+    <div class="char-count" id="count_fBody"></div>
     <label>Pillars / Services (6)</label>
     <div class="row-3">
-      <div><input id="p1" value="Energetic block clearing"></div>
-      <div><input id="p2" value="Soul readings"></div>
-      <div><input id="p3" value="Ancestral imprints"></div>
-      <div><input id="p4" value="Blueprint awareness"></div>
-      <div><input id="p5" value="Human design"></div>
-      <div><input id="p6" value="Numerology &amp; astrology"></div>
+      <div><input id="p1" maxlength="35" value="Energetic block clearing"><div class="char-count" id="count_p1"></div></div>
+      <div><input id="p2" maxlength="35" value="Soul readings"><div class="char-count" id="count_p2"></div></div>
+      <div><input id="p3" maxlength="35" value="Ancestral imprints"><div class="char-count" id="count_p3"></div></div>
+      <div><input id="p4" maxlength="35" value="Blueprint awareness"><div class="char-count" id="count_p4"></div></div>
+      <div><input id="p5" maxlength="35" value="Human design"><div class="char-count" id="count_p5"></div></div>
+      <div><input id="p6" maxlength="35" value="Numerology &amp; astrology"><div class="char-count" id="count_p6"></div></div>
     </div>
     <label>Intention Label</label>
-    <input id="fIntentionLabel" value="My intention for you">
+    <input id="fIntentionLabel" maxlength="30" value="My intention for you">
+    <div class="char-count" id="count_fIntentionLabel"></div>
     <label>Intention Quote</label>
-    <textarea id="fIntention">"To help create a space where you feel grounded, seen, supported, and energetically open — to receive the full depth of your own healing, remembrance, and transformation."</textarea>
+    <textarea id="fIntention" maxlength="250">"To help create a space where you feel grounded, seen, supported, and energetically open — to receive the full depth of your own healing, remembrance, and transformation."</textarea>
+    <div class="char-count" id="count_fIntention"></div>
     <label>Flip Hint Text</label>
-    <input id="fHint" value="Tap to read my story">
+    <input id="fHint" maxlength="30" value="Tap to read my story">
+    <div class="char-count" id="count_fHint"></div>
 
     <h2>Back — Hero</h2>
     <label>Back Eyebrow</label>
-    <input id="bEyebrow" value="About Rose Selma">
+    <input id="bEyebrow" maxlength="25" value="About Rose Selma">
+    <div class="char-count" id="count_bEyebrow"></div>
     <div class="row">
-      <div><label>Back Name Line 1</label><input id="bName1" value="Walking alongside you"></div>
-      <div><label>Back Name Line 2 (italic)</label><input id="bName2" value="on this journey"></div>
+      <div><label>Back Name Line 1</label><input id="bName1" maxlength="35" value="Walking alongside you"><div class="char-count" id="count_bName1"></div></div>
+      <div><label>Back Name Line 2 (italic)</label><input id="bName2" maxlength="30" value="on this journey"><div class="char-count" id="count_bName2"></div></div>
     </div>
 
     <h2>Back — Bio</h2>
     <label>Paragraph 1</label>
-    <textarea id="bio1">I'm <strong>Rose Selma Tindi Amadi</strong> — an Energy Healer, Intuitive Guide, Soul Alignment Facilitator, and Life Coach with over <strong>15 years of transformative work</strong> supporting people through self-discovery, healing, and deeper alignment.</textarea>
+    <div class="fmt-bar">
+      <button class="fmt-btn fmt-btn-bold" onclick="fmtCmd('bold','bio1')" title="Bold">B</button>
+      <button class="fmt-btn fmt-btn-italic" onclick="fmtCmd('italic','bio1')" title="Italic"><em>I</em></button>
+    </div>
+    <div id="bio1" class="content-editable" contenteditable="true" data-maxchars="300">I'm <strong>Rose Selma Tindi Amadi</strong> — an Energy Healer, Intuitive Guide, Soul Alignment Facilitator, and Life Coach with over <strong>15 years of transformative work</strong> supporting people through self-discovery, healing, and deeper alignment.</div>
+    <div class="char-count" id="count_bio1"></div>
+
     <label>Paragraph 2</label>
-    <textarea id="bio2">My practice weaves together <strong>energy healing, soul readings, and blueprint awareness</strong> — including numerology, astrology, and human design — to help you identify energetic blocks, emotional patterns, and soul-level themes that may be limiting your expansion.</textarea>
+    <div class="fmt-bar">
+      <button class="fmt-btn fmt-btn-bold" onclick="fmtCmd('bold','bio2')" title="Bold">B</button>
+      <button class="fmt-btn fmt-btn-italic" onclick="fmtCmd('italic','bio2')" title="Italic"><em>I</em></button>
+    </div>
+    <div id="bio2" class="content-editable" contenteditable="true" data-maxchars="300">My practice weaves together <strong>energy healing, soul readings, and blueprint awareness</strong> — including numerology, astrology, and human design — to help you identify energetic blocks, emotional patterns, and soul-level themes that may be limiting your expansion.</div>
+    <div class="char-count" id="count_bio2"></div>
+
     <label>Paragraph 3</label>
-    <textarea id="bio3">I also hold space for a community of <strong>200 Awakening Allies</strong>, gathered around healing, empowerment, spiritual growth, and conscious transformation.</textarea>
+    <div class="fmt-bar">
+      <button class="fmt-btn fmt-btn-bold" onclick="fmtCmd('bold','bio3')" title="Bold">B</button>
+      <button class="fmt-btn fmt-btn-italic" onclick="fmtCmd('italic','bio3')" title="Italic"><em>I</em></button>
+    </div>
+    <div id="bio3" class="content-editable" contenteditable="true" data-maxchars="200">I also hold space for a community of <strong>200 Awakening Allies</strong>, gathered around healing, empowerment, spiritual growth, and conscious transformation.</div>
+    <div class="char-count" id="count_bio3"></div>
+
     <label>Paragraph 4</label>
-    <textarea id="bio4">Before and during your journey, my intention is to help you feel <strong>grounded, seen, and energetically open</strong> — so you can receive the full depth of your own remembrance and transformation.</textarea>
+    <div class="fmt-bar">
+      <button class="fmt-btn fmt-btn-bold" onclick="fmtCmd('bold','bio4')" title="Bold">B</button>
+      <button class="fmt-btn fmt-btn-italic" onclick="fmtCmd('italic','bio4')" title="Italic"><em>I</em></button>
+    </div>
+    <div id="bio4" class="content-editable" contenteditable="true" data-maxchars="250">Before and during your journey, my intention is to help you feel <strong>grounded, seen, and energetically open</strong> — so you can receive the full depth of your own remembrance and transformation.</div>
+    <div class="char-count" id="count_bio4"></div>
 
     <h2>Back — Tags</h2>
     <div class="row-3">
-      <div><input id="t1" value="Energy Healing"></div>
-      <div><input id="t2" value="Soul Readings"></div>
-      <div><input id="t3" value="Human Design"></div>
-      <div><input id="t4" value="Numerology"></div>
-      <div><input id="t5" value="Astrology"></div>
-      <div><input id="t6" value="Life Coaching"></div>
-      <div><input id="t7" value="Ancestral Work"></div>
+      <div><input id="t1" maxlength="22" value="Energy Healing"><div class="char-count" id="count_t1"></div></div>
+      <div><input id="t2" maxlength="22" value="Soul Readings"><div class="char-count" id="count_t2"></div></div>
+      <div><input id="t3" maxlength="22" value="Human Design"><div class="char-count" id="count_t3"></div></div>
+      <div><input id="t4" maxlength="22" value="Numerology"><div class="char-count" id="count_t4"></div></div>
+      <div><input id="t5" maxlength="22" value="Astrology"><div class="char-count" id="count_t5"></div></div>
+      <div><input id="t6" maxlength="22" value="Life Coaching"><div class="char-count" id="count_t6"></div></div>
+      <div><input id="t7" maxlength="22" value="Ancestral Work"><div class="char-count" id="count_t7"></div></div>
     </div>
 
     <h2>Back — Footer</h2>
     <label>Back Flip Hint</label>
-    <input id="bHint" value="Tap to flip back">
+    <input id="bHint" maxlength="25" value="Tap to flip back">
+    <div class="char-count" id="count_bHint"></div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="generateCard()">Download HTML</button>
+      <button class="btn btn-primary" onclick="saveCard()">Save &amp; Publish</button>
+      <button class="btn btn-secondary" onclick="generateCard()">Download HTML</button>
       <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
     </div>
     <div id="genMsg"></div>
@@ -417,9 +483,22 @@ body {
     bindInputs();
   }
 
-  /* ── Live preview rendering ── */
-  function v(id) { return document.getElementById(id).value; }
+  /* ── Formatting toolbar ── */
+  window.fmtCmd = function(cmd, id) {
+    document.execCommand(cmd, false, null);
+    document.getElementById(id).focus();
+    renderPreview();
+  };
 
+  /* ── Get value (handles both inputs and contenteditable) ── */
+  function v(id) {
+    var el = document.getElementById(id);
+    if (!el) return '';
+    if (el.contentEditable === 'true') return el.innerHTML;
+    return el.value || '';
+  }
+
+  /* ── Live preview rendering ── */
   function renderFront() {
     var svgCircle = '<svg class="sacred-bg-preview" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg"><circle cx="90" cy="90" r="75" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="90" cy="90" r="50" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="115" cy="90" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="65" cy="90" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="102" cy="68" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="78" cy="68" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="102" cy="112" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/><circle cx="78" cy="112" r="25" fill="none" stroke="#b8956a" stroke-width="0.5"/></svg>';
 
@@ -493,24 +572,73 @@ body {
   }
 
   function bindInputs() {
-    var inputs = document.querySelectorAll('#editorPanel input, #editorPanel textarea');
+    var inputs = document.querySelectorAll('#editorPanel input, #editorPanel textarea, #editorPanel [contenteditable]');
     for (var i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener('input', function() {
-        this.classList.add('changed');
+        updateCounter(this);
         renderPreview();
       });
+      /* Initial counter value */
+      updateCounter(inputs[i]);
     }
   }
 
-  /* ── Generate & Download ── */
-  window.generateCard = function() {
-    var g = function(id) { return document.getElementById(id).value; };
+  /* ── Character counters ── */
+  function updateCounter(el) {
+    var id = el.id;
+    var counterEl = document.getElementById('count_' + id);
+    if (!counterEl) return;
 
-    var pageTitle = g('pageTitle').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    var ogDesc = g('ogDesc').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    var twitterDesc = g('fBody').length > 120 ? g('fBody').substring(0, 117) + '...' : g('fBody');
-    var fName1 = g('fName1');
-    var fName2 = g('fName2');
+    var max = el.maxLength || parseInt(el.getAttribute('data-maxchars')) || 0;
+    if (!max) { counterEl.textContent = ''; return; }
+
+    var text = el.contentEditable === 'true' ? (el.textContent || '') : (el.value || '');
+    var len = text.length;
+    counterEl.textContent = len + '/' + max;
+    counterEl.className = 'char-count' + (len > max * 0.85 ? ' warn' : '');
+  }
+
+  /* ── Enforce contenteditable char limits ── */
+  document.addEventListener('keydown', function(e) {
+    var el = e.target;
+    if (!el.contentEditable || el.contentEditable !== 'true') return;
+    var max = parseInt(el.getAttribute('data-maxchars'));
+    if (!max) return;
+    var text = el.textContent || '';
+    /* Allow backspace, delete, arrows, etc */
+    var allowed = [8, 46, 37, 38, 39, 40, 27, 16, 17, 18, 91, 93];
+    if (allowed.indexOf(e.keyCode) !== -1) return;
+    if (text.length >= max) {
+      e.preventDefault();
+    }
+  });
+
+  /* ── Save to localStorage (makes changes live on public page) ── */
+  window.saveCard = function() {
+    var data = {};
+    var fields = ['pageTitle','ogDesc','fEyebrow','fName1','fName2','fTitles1','fTitles2',
+      's1num','s1label','s2num','s2label','s3num','s3label',
+      'fBody','p1','p2','p3','p4','p5','p6','fIntentionLabel','fIntention','fHint',
+      'bEyebrow','bName1','bName2','bio1','bio2','bio3','bio4',
+      't1','t2','t3','t4','t5','t6','t7','bHint'];
+
+    for (var i = 0; i < fields.length; i++) {
+      data[fields[i]] = v(fields[i]);
+    }
+
+    localStorage.setItem('cardContent', JSON.stringify(data));
+
+    document.getElementById('genMsg').innerHTML = '<div class="msg msg-success">Saved! Changes are now live on the public card. <a href="index.html" style="color:#b8956a;">View card</a></div>';
+    setTimeout(function() { document.getElementById('genMsg').innerHTML = ''; }, 8000);
+  };
+
+  /* ── Download HTML (for manual push) ── */
+  window.generateCard = function() {
+    var g = function(id) { return v(id).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+
+    var pageTitle = g('pageTitle');
+    var ogDesc = g('ogDesc');
+    var twitterDesc = v('fBody').length > 120 ? v('fBody').substring(0, 117) + '...' : v('fBody');
 
     var meta = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n\n';
     meta += '<!-- Open Graph / Social Preview -->\n';
@@ -521,8 +649,8 @@ body {
     meta += '<meta property="og:image" content="https://tich-labs.github.io/tindi-selma/assets/og-image.png" />\n';
     meta += '<meta property="og:image:width" content="1200" />\n';
     meta += '<meta property="og:image:height" content="630" />\n';
-    meta += '<meta property="profile:first_name" content="' + fName1 + '" />\n';
-    meta += '<meta property="profile:last_name" content="' + fName2 + '" />\n\n';
+    meta += '<meta property="profile:first_name" content="' + v('fName1') + '" />\n';
+    meta += '<meta property="profile:last_name" content="' + v('fName2') + '" />\n\n';
     meta += '<!-- Twitter Card -->\n';
     meta += '<meta name="twitter:card" content="summary_large_image" />\n';
     meta += '<meta name="twitter:title" content="' + pageTitle + '" />\n';
@@ -536,18 +664,18 @@ body {
 
     var placeholders = {
       '{{PAGE_TITLE}}': pageTitle, '{{OG_DESC}}': ogDesc, '{{TWITTER_DESC}}': twitterDesc,
-      '{{F_NAME1}}': g('fName1'), '{{F_NAME2}}': g('fName2'), '{{F_EYEBROW}}': g('fEyebrow'),
-      '{{F_TITLES1}}': g('fTitles1'), '{{F_TITLES2}}': g('fTitles2'),
-      '{{S1NUM}}': g('s1num'), '{{S1LABEL}}': g('s1label'), '{{S2NUM}}': g('s2num'),
-      '{{S2LABEL}}': g('s2label'), '{{S3NUM}}': g('s3num'), '{{S3LABEL}}': g('s3label'),
-      '{{F_BODY}}': g('fBody'), '{{P1}}': g('p1'), '{{P2}}': g('p2'), '{{P3}}': g('p3'),
-      '{{P4}}': g('p4'), '{{P5}}': g('p5'), '{{P6}}': g('p6'),
-      '{{F_INTENTION_LABEL}}': g('fIntentionLabel'), '{{F_INTENTION}}': g('fIntention'),
-      '{{F_HINT}}': g('fHint'), '{{B_EYEBROW}}': g('bEyebrow'),
-      '{{B_NAME1}}': g('bName1'), '{{B_NAME2}}': g('bName2'),
-      '{{BIO1}}': g('bio1'), '{{BIO2}}': g('bio2'), '{{BIO3}}': g('bio3'), '{{BIO4}}': g('bio4'),
-      '{{T1}}': g('t1'), '{{T2}}': g('t2'), '{{T3}}': g('t3'), '{{T4}}': g('t4'),
-      '{{T5}}': g('t5'), '{{T6}}': g('t6'), '{{T7}}': g('t7'), '{{B_HINT}}': g('bHint')
+      '{{F_NAME1}}': v('fName1'), '{{F_NAME2}}': v('fName2'), '{{F_EYEBROW}}': v('fEyebrow'),
+      '{{F_TITLES1}}': v('fTitles1'), '{{F_TITLES2}}': v('fTitles2'),
+      '{{S1NUM}}': v('s1num'), '{{S1LABEL}}': v('s1label'), '{{S2NUM}}': v('s2num'),
+      '{{S2LABEL}}': v('s2label'), '{{S3NUM}}': v('s3num'), '{{S3LABEL}}': v('s3label'),
+      '{{F_BODY}}': v('fBody'), '{{P1}}': v('p1'), '{{P2}}': v('p2'), '{{P3}}': v('p3'),
+      '{{P4}}': v('p4'), '{{P5}}': v('p5'), '{{P6}}': v('p6'),
+      '{{F_INTENTION_LABEL}}': v('fIntentionLabel'), '{{F_INTENTION}}': v('fIntention'),
+      '{{F_HINT}}': v('fHint'), '{{B_EYEBROW}}': v('bEyebrow'),
+      '{{B_NAME1}}': v('bName1'), '{{B_NAME2}}': v('bName2'),
+      '{{BIO1}}': v('bio1'), '{{BIO2}}': v('bio2'), '{{BIO3}}': v('bio3'), '{{BIO4}}': v('bio4'),
+      '{{T1}}': v('t1'), '{{T2}}': v('t2'), '{{T3}}': v('t3'), '{{T4}}': v('t4'),
+      '{{T5}}': v('t5'), '{{T6}}': v('t6'), '{{T7}}': v('t7'), '{{B_HINT}}': v('bHint')
     };
 
     var templateEl = document.getElementById('cardTemplate');
