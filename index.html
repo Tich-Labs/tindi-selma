@@ -606,11 +606,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     </button>
   </div>
-  <button class="share-btn" onclick="downloadPDF()">
+  <button class="share-btn" onclick="downloadImage()">
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 4h12v12H4z"/><path d="M7 12l3 3 3-3"/><path d="M10 7v8"/>
+      <rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M3 15l4-4 2 2 5-5 3 3v4"/>
     </svg>
-    Download PDF
+    Download Image
   </button>
   <div class="copied-msg" id="copiedMsg">Link copied to clipboard</div>
 </div>
@@ -682,8 +682,82 @@
     URL.revokeObjectURL(a.href);
   }
 
-  function downloadPDF() {
-    window.print();
+  function downloadImage() {
+    /* Load html2canvas dynamically */
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    script.onload = function() {
+      var scene = document.getElementById('scene');
+      var wasFlipped = scene.classList.contains('flipped');
+
+      /* Unflip to capture front */
+      scene.classList.remove('flipped');
+
+      /* Wait a frame for the transition to settle */
+      setTimeout(function() {
+        var frontEl = scene.querySelector('.front');
+
+        html2canvas(frontEl, {
+          backgroundColor: '#faf7f2',
+          scale: 2,
+          useCORS: true,
+          allowTaint: true
+        }).then(function(frontCanvas) {
+
+          /* Flip to capture back */
+          scene.classList.add('flipped');
+
+          setTimeout(function() {
+            var backEl = scene.querySelector('.back');
+
+            html2canvas(backEl, {
+              backgroundColor: '#1a1410',
+              scale: 2,
+              useCORS: true,
+              allowTaint: true
+            }).then(function(backCanvas) {
+
+              /* Restore original flip state */
+              if (!wasFlipped) scene.classList.remove('flipped');
+
+              /* Create combined landscape canvas */
+              var padding = 60;
+              var gap = 40;
+              var cardW = frontCanvas.width;
+              var cardH = frontCanvas.height;
+              var totalW = cardW * 2 + gap + padding * 2;
+              var totalH = cardH + padding * 2;
+
+              var combined = document.createElement('canvas');
+              combined.width = totalW;
+              combined.height = totalH;
+              var ctx = combined.getContext('2d');
+
+              /* White background */
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, totalW, totalH);
+
+              /* Draw front card on left */
+              ctx.drawImage(frontCanvas, padding, padding, cardW, cardH);
+
+              /* Draw back card on right */
+              ctx.drawImage(backCanvas, padding + cardW + gap, padding, cardW, cardH);
+
+              /* Download */
+              combined.toBlob(function(blob) {
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'rose-selma-card.png';
+                a.click();
+                URL.revokeObjectURL(url);
+              }, 'image/png');
+            });
+          }, 850);
+        });
+      }, 100);
+    };
+    document.head.appendChild(script);
   }
 
   /* Register Service Worker for offline support */
