@@ -719,7 +719,7 @@
       allowTaint: true,
       logging: false
     }).then(function(canvas) {
-      document.body.removeChild(capture);
+      if (capture.parentNode) capture.parentNode.removeChild(capture);
 
       canvas.toBlob(function(blob) {
         var url = URL.createObjectURL(blob);
@@ -730,9 +730,8 @@
         URL.revokeObjectURL(url);
       }, 'image/png');
     }).catch(function(err) {
-      document.body.removeChild(capture);
+      if (capture.parentNode) capture.parentNode.removeChild(capture);
       console.error('Image capture failed:', err);
-      alert('Could not capture image. Please try again.');
     });
   }
 
